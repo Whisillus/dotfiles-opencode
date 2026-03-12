@@ -1,0 +1,14 @@
+# Dependencies and local package setup
+node_modules/
+package.json
+bun.lock
+
+# Environment files
+.env
+.env.*
+
+# OS/editor artifacts
+.DS_Store
+.vscode/
+.idea/
+*.log
