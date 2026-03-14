@@ -1,0 +1,47 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "autoupdate": false,
+  "share": "disabled",
+
+  // "model": "zhipuai-coding-plan/glm-5",
+  "default_agent": "question-diver",
+
+  "server": {
+    "port": 114514,
+  },
+
+  "permission": {
+    "external_directory": {
+        "*": "ask",
+        "~/.config/opencode/skill/*": "allow",
+        "/tmp/*": "allow",
+    },
+  },
+
+  "mcp": {
+    "web-search-prime": {
+        "type": "remote",
+        "url": "https://open.bigmodel.cn/api/mcp/web_search_prime/mcp",
+        "headers": {
+            "Authorization": "Bearer {env:Z_AI_API_KEY}"
+        },
+        "enabled": false,
+    },
+    "web-reader": {
+        "type": "remote",
+        "url": "https://open.bigmodel.cn/api/mcp/web_reader/mcp",
+        "headers": {
+            "Authorization": "Bearer {env:Z_AI_API_KEY}"
+        },
+        "enabled": true,
+    },
+    "zread": {
+        "type": "remote",
+        "url": "https://open.bigmodel.cn/api/mcp/zread/mcp",
+        "headers": {
+            "Authorization": "Bearer {env:Z_AI_API_KEY}"
+        },
+        "enabled": false,
+    },
+  },
+}
