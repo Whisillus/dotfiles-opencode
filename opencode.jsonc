@@ -25,7 +25,7 @@
         "headers": {
             "Authorization": "Bearer {env:Z_AI_API_KEY}"
         },
-        "enabled": false,
+        "enabled": true,
     },
     "web-reader": {
         "type": "remote",
@@ -41,7 +41,7 @@
         "headers": {
             "Authorization": "Bearer {env:Z_AI_API_KEY}"
         },
-        "enabled": false,
+        "enabled": true,
     },
   },
 }
