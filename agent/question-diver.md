@@ -24,6 +24,7 @@ permission:
     "cat *": "allow"
     "head *": "allow"
     "tail *": "allow"
+    "git diff*": "allow"
     "git grep*": "allow"
     "git status*": "allow"
     "git log*": "allow"
