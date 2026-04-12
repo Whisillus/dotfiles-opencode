@@ -15,6 +15,28 @@ Use this skill as the default notation standard for all mathematical writing in 
 - Prefer clarity over cleverness, and prefer standard CS/ML notation over personal shorthand.
 - If the user explicitly specifies notation or symbol names, follow the user’s convention and apply this skill only to keep that convention consistent, clear, and compatible with the site’s configured math renderer.
 
+# Equation mode and delimiters
+
+- Use the Hugo site's configured math delimiters.
+- Ensure the delimiters used in content match both the Goldmark passthrough configuration and the active math renderer configuration.
+- Do not assume that one delimiter style is universally enabled across Hugo sites.
+- For inline math, prefer `\(...\)` unless the local Hugo site explicitly uses another inline delimiter convention.
+- For display math, use the site's configured display delimiters, typically `\[...\]` or `$$...$$`.
+- Do not use `$...$` for inline math unless the local Hugo configuration and renderer explicitly support it.
+- If inline `$...$` is enabled, escape plain dollar signs outside math contexts as required by the site's Markdown and renderer configuration.
+- Prefer wrapping display environments inside the site's configured display delimiters unless the local setup explicitly and consistently supports bare `\begin{...}...\end{...}` display environments.
+- When using display environments such as `equation`, `align`, `aligned`, `cases`, or matrix environments, ensure the active renderer supports them.
+- Keep inline math short and grammatically integrated into the sentence.
+- Use display math for standalone equations, long expressions, derivations, matrices, and piecewise definitions.
+
+## Audit checks
+
+- Flag math delimiters that do not match the local Hugo passthrough or renderer configuration.
+- Flag use of `$...$` for inline math when inline dollar delimiters are not explicitly enabled.
+- Flag display environments whose renderer support is not confirmed locally.
+- Flag long or dense inline expressions that should be rewritten as display math.
+- Flag trivial display equations that should be inline instead.
+- Flag display equations that are not integrated into the surrounding prose.
 
 # Symbol naming and reuse policy
 
@@ -81,8 +103,10 @@ This section governs how symbols are introduced, named, reused, and audited acro
 - If the relationship is not direct and obvious, use a different base symbol.
 
 ## Standard convention exceptions
-- Some CS/ML conventions reuse a base symbol across typography families, such as `p` and `\boldsymbol{p}` for scalar and vector probability quantities.
+
+- Some CS/ML conventions reuse a base symbol across typography families, such as `p` and `\boldsymbol{p}` for scalar and vector probability quantities, or `w_t` and `\boldsymbol{W}` for token symbols and weight matrices.
 - Allow such reuse only when the convention is standard, the distinction is introduced explicitly, and no clearer alternative is preferable in the same local context.
+- If confusion is likely, rename the less central symbol, e.g. use `N_{\text{vocab}}` instead of `V`.
 
 ## Variants and modifiers
 
@@ -93,8 +117,8 @@ This section governs how symbols are introduced, named, reused, and audited acro
   - `\boldsymbol{h}^{(\ell)}`, `\boldsymbol{h}^{(\ell+1)}`
   - `p_{\text{data}}`, `p_{\boldsymbol{\theta}}`
 - Use `\text{...}` in semantic subscripts:
-  - write `\boldsymbol{W}_{\text{cls}}`
-  - not `\boldsymbol{W}_{cls}`
+  - write `\boldsymbol{W}_{\text{class}}`
+  - not `\boldsymbol{W}_{class}`
 
 ## When a symbol is already taken
 
@@ -122,17 +146,14 @@ This section governs how symbols are introduced, named, reused, and audited acro
 - Flag conflicting uses such as:
   - `\boldsymbol{X}` as data matrix and `X` as unrelated random variable
   - `f` as both model and scalar feature
-  - `\mathcal{L}` as loss and `L` as number of layers in the same derivation
-
+  - `\mathcal{L}` as loss and `L` as an unrelated scalar in the same derivation
 
 # Variable
 
 ## Scalar
-
 - Use lowercase italic for scalar variables: `x`, `y`, `z`, `a`, `b`, `\alpha`, `\beta`, `\lambda`, `\eta`.
-- Use hats for estimates or predictions: `\hat{y}`, `\hat{\theta}`, `\hat{p}`.
-- Use bars for averages or pooled quantities: `\bar{x}`, `\bar{\boldsymbol{h}}`.
-- Use stars for optimal values: `x^*`, `\theta^*`, `\boldsymbol{w}^*`.
+- Use hats for scalar estimates or predictions, e.g. `\hat{y}`, `\hat{p}`.
+- If a parameter is genuinely scalar rather than a parameter collection, scalar forms such as `\hat{\theta}` or `\theta^*` are allowed.
 
 ## Vectors
 
@@ -183,7 +204,7 @@ Use the following symbols by default unless a topic strongly requires something 
 - `C`: number of classes
 - `V`: vocabulary size by default; if attention notation uses `\boldsymbol{V}` in the same local context, use `N_{\text{vocab}}` instead
 - `S`: sequence length
-- `L`: number of layers
+- `N_{\text{layers}}`: number of layers
 
 ### Indices
 
@@ -351,3 +372,63 @@ Use the following symbols by default unless a topic strongly requires something 
 - Flag undefined sequence length symbols.
 - Flag pairwise notation whose index roles are not explained.
 - Flag whole-sequence matrix shapes that conflict with the stated vector orientation.
+
+# Subscript / superscript policy
+
+## Subscripts
+
+- Use subscripts for components and entries, e.g. `x_j`, `(\boldsymbol{W})_{ij}`.
+- Use subscripts for ordered positions or steps, e.g. `\boldsymbol{h}_t`, `\eta_k`, `\boldsymbol{\theta}_k`.
+- Use subscripts for semantic labels, e.g. `\mathcal{L}_{\text{train}}`, `\boldsymbol{W}_{\text{class}}`.
+- Use `\text{...}` for semantic labels and multi-character textual labels.
+- Do not use subscripts for meanings that should be written as superscript labels, such as sample indices or layer labels.
+
+## Superscripts
+
+- Use superscripts for sample labels, e.g. `\boldsymbol{x}^{(i)}`.
+- Use superscripts for layer labels, e.g. `\boldsymbol{W}^{(\ell)}`.
+- Use superscripts for powers and exponents, e.g. `x^2`, `\sigma^2`.
+- Use structural superscripts such as `^\top`, `^{-1}`, and `^\dagger` for transpose, inverse, and pseudoinverse.
+- Use parenthesized superscripts for labels, e.g. `^{(i)}`, `^{(\ell)}`.
+- Use plain superscripts for arithmetic powers, e.g. `x^2`, not `x^{(2)}`.
+- Do not use superscripts for ordered optimization steps by default; prefer `\boldsymbol{\theta}_k` over `\boldsymbol{\theta}^{(k)}` when `k` denotes a step in a sequence of iterates.
+
+## Combined subscripts and superscripts
+
+- When both are needed, keep their roles distinct and their order consistent.
+- Prefer positional or semantic information in the subscript and sample or layer labels in the superscript.
+- Prefer `\boldsymbol{x}_t^{(i)}` over `\boldsymbol{x}^{(i)}_t`, and keep that order consistent throughout the post.
+- Use the same convention for related quantities, e.g. `\boldsymbol{h}_t^{(\ell)}`, `\boldsymbol{z}_t^{(\ell)}`, and `\boldsymbol{p}_t^{(i)}`.
+
+## Decorations
+
+- Use hats for estimates or predictions, e.g. `\hat{y}`, `\hat{p}`, `\hat{\boldsymbol{\theta}}`.
+- Use bars for averages, pooled quantities, or mean values, e.g. `\bar{x}`, `\bar{\boldsymbol{h}}`.
+- Use stars for optimal values, e.g. `x^*`, `\boldsymbol{\theta}^*`, `\boldsymbol{w}^*`.
+- Define the meaning of each decoration on first use when it is not already obvious from context.
+- Keep decoration meanings consistent across the whole post.
+
+## Policy
+
+- Keep the role of each subscript and superscript consistent across the whole post.
+- Use subscripts for ordered indexing and semantic labeling by default.
+- Use superscripts for labels, powers, and structural operations by default.
+- Use braces whenever a subscript or superscript contains more than one token or includes formatting commands.
+- Avoid code-like identifiers such as `h_class`, `Wl`, or `theta_k_step` in mathematical notation.
+
+## Avoid
+
+- `h_class` instead of `\boldsymbol{h}_{\text{class}}`
+- `W_l` when `\boldsymbol{W}^{(\ell)}` is intended as a layer label
+- `\boldsymbol{\theta}^{(k)}` when `k` is an optimization step and `\boldsymbol{\theta}_k` is the intended iterate
+- mixed ordering such as `\boldsymbol{x}_t^{(i)}` in one place and `\boldsymbol{x}^{(i)}_t` in another
+- using the same superscript style for both labels and arithmetic powers in the same local context
+
+## Audit checks
+
+- Flag semantic labels written without `\text{...}`.
+- Flag inconsistent use of subscripts and superscripts for the same role.
+- Flag inconsistent ordering of positional and sample or layer indices.
+- Flag ambiguous superscripts that could be read as either labels or powers.
+- Flag unreadable stacked decorations or index structures.
+- Flag code-like identifier patterns that should be rewritten in mathematical notation.
