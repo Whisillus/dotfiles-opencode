@@ -1,0 +1,189 @@
+---
+name: hugo-latex-notation
+description: Defines the house notation standard for mathematical writing in Hugo posts about computer science and machine learning.
+---
+
+# Notation
+
+Use this skill as the default notation standard for all mathematical writing in Hugo posts about computer science and machine learning.
+
+- Write math that is compatible with the current Hugo site's configured math renderer, delimiters, and loaded macros.
+- If renderer support is unclear, determine compatibility from the local Hugo configuration and math partials first, then fall back to a conservative KaTeX-safe subset.
+- Keep notation conventional, explicit, and consistent across the whole post.
+- Define symbols on first use and avoid reusing the same base symbol for unrelated meanings.
+- State shapes, domains, or roles when they are needed for understanding.
+- Prefer clarity over cleverness, and prefer standard CS/ML notation over personal shorthand.
+- If the user explicitly specifies notation or symbol names, follow the user’s convention and apply this skill only to keep that convention consistent, clear, and compatible with the site’s configured math renderer.
+
+
+# Symbol naming and reuse policy
+This section governs how symbols are introduced, named, reused, and audited across the entire document.
+
+## Core principle
+- Choose symbols that are meaningful, conventional, and easy to remember.
+- Within the same local context, one base symbol should refer to only one concept family.
+- Typography alone does not justify reuse. For example, `X`, `\boldsymbol{X}`, and `\mathcal{X}` should not denote unrelated concepts in the same local context.
+
+## Local context
+- By default, the local context is the current subsection, derivation, or algorithm block.
+- In long sections, the local context may be reset only if the new meaning is introduced explicitly and the previous meaning is no longer active.
+- If there is any risk of confusion, choose a new base symbol instead of redefining an old one.
+
+## Meaningful naming
+- Prefer symbols that follow established CS/ML conventions.
+- Use symbols that suggest the role of the object.
+- Prefer:
+  - `\boldsymbol{x}` for inputs or feature vectors
+  - `\boldsymbol{X}` for data matrices
+  - `\boldsymbol{W}` for weight matrices
+  - `\boldsymbol{h}` for hidden states
+  - `\boldsymbol{z}` for logits or pre-activations
+  - `\boldsymbol{p}` for probability vectors
+  - `\boldsymbol{\theta}` for trainable parameters
+  - `\mathcal{D}` for datasets
+  - `\mathcal{L}` for losses or objectives
+  - `p` for probability densities or mass functions
+  - `f`, `g` for functions or models
+- Do not introduce arbitrary letters such as `A`, `B`, or `C` when a more meaningful conventional symbol is available.
+
+## One base symbol, one concept family
+- A base symbol must not be reused for unrelated objects in the same local context.
+- This restriction applies to:
+  - scalars
+  - vectors
+  - matrices
+  - tensors
+  - sets
+  - functions
+  - operators
+  - random variables
+  - datasets
+  - losses and objectives
+- Examples of forbidden reuse:
+  - `\boldsymbol{X}` for the data matrix and `X` for an unrelated random variable
+  - `f` for the prediction function and `f` again for a feature index
+  - `\boldsymbol{W}` for weights and `W` again for a sequence window size
+  - `T` for sequence length and `T` again for temperature or a transformation
+
+## Allowed related reuse
+- The same base symbol may be reused only when the meanings are clearly related.
+- Allowed examples:
+  - `X` for a random variable and `x` for one realization of `X`
+  - `\boldsymbol{x}` for a vector and `x_j` for its j-th component
+  - `\boldsymbol{W}` for a matrix and `W_{ij}` for its `(i,j)` entry
+  - `f(x)` for a generic function and `f_{\boldsymbol{\theta}}(\boldsymbol{x})` for a parameterized version of that function
+  - `\mathcal{X}` for a set and `x \in \mathcal{X}` for an element of that set
+- If the relationship is not direct and obvious, use a different base symbol.
+
+## Variants and modifiers
+- For related variants of the same concept, prefer semantic subscripts, superscripts, or decorations instead of changing to a conflicting base symbol.
+- Prefer:
+  - `\mathcal{L}_{\text{train}}`, `\mathcal{L}_{\text{test}}`
+  - `\boldsymbol{W}_{\text{in}}`, `\boldsymbol{W}_{\text{out}}`
+  - `\boldsymbol{h}^{(\ell)}`, `\boldsymbol{h}^{(\ell+1)}`
+  - `p_{\text{data}}`, `p_{\boldsymbol{\theta}}`
+- Use `\text{...}` in semantic subscripts:
+  - write `\boldsymbol{W}_{\text{cls}}`
+  - not `\boldsymbol{W}_{cls}`
+
+## When a symbol is already taken
+- If a conventional symbol is already in use, choose a nearby but distinct alternative.
+- Examples:
+  - if `\boldsymbol{X}` is the data matrix, use `Z` or `H` for a random variable or latent state
+  - if `T` is sequence length, use `\tau` for temperature
+  - if `f` is the model, use `\phi` or `\psi` for feature maps or auxiliary transforms
+- Do not force reuse just because the letter is standard in another paper.
+
+## Agent behavior
+- Prefer meaningful and conventional symbols.
+- Check whether a base symbol is already active in the current local context.
+- Avoid reusing symbols across unrelated object types.
+- Define every new symbol on first use.
+- State the role and shape or domain of important objects when introduced.
+- When support is uncertain, avoid package-dependent commands, custom macros, advanced equation references, and nonstandard environments unless they are confirmed locally.
+
+## Audit checks
+- Flag same base symbols reused for unrelated meanings.
+- Flag same base symbols reused across unrelated object types.
+- Flag arbitrary symbols used where a standard meaningful symbol would be clearer.
+- Flag symbol redefinition without explicit notice.
+- Flag conflicting uses such as:
+  - `\boldsymbol{X}` as data matrix and `X` as unrelated random variable
+  - `f` as both model and scalar feature
+  - `T` as both sequence length and temperature
+  - `\mathcal{L}` as loss and `L` as number of layers in the same derivation
+
+
+# Variable
+
+## Scalar
+- Use lowercase italic for scalar variables: `x`, `y`, `z`, `a`, `b`, `\alpha`, `\beta`, `\lambda`, `\eta`.
+- Use hats for estimates or predictions: `\hat{y}`, `\hat{\theta}`, `\hat{p}`.
+- Use bars for averages or pooled quantities: `\bar{x}`, `\bar{\boldsymbol{h}}`.
+- Use stars for optimal values: `x^*`, `\theta^*`, `\boldsymbol{w}^*`.
+
+## Vectors
+- Use bold lowercase for vectors: `\boldsymbol{x}`, `\boldsymbol{h}`, `\boldsymbol{g}`, `\boldsymbol{\mu}`.
+- State the shape or domain on first use if applicable, e.g. `\boldsymbol{x} \in \mathbb{R}^d`.
+- Do not mix `\vec{x}`, `\mathbf{x}`, `\bm{x}`, and `\boldsymbol{x}` in the same document.
+
+## Matrices
+- Use bold uppercase for matrices: `\boldsymbol{X}`, `\boldsymbol{W}`, `\boldsymbol{A}`, `\boldsymbol{\Sigma}`.
+- State the shape on first use if applicable, e.g. `\boldsymbol{W} \in \mathbb{R}^{m \times d}`.
+
+## Tensors
+- Use bold uppercase for tensors: `\boldsymbol{T}`, `\boldsymbol{H}`.
+- State tensor order and shape explicitly in prose or notation if applicable, e.g.
+  `\boldsymbol{T} \in \mathbb{R}^{n \times T \times d}` is a third-order tensor.
+- Do not rely on more decorative tensor styles unless the whole site uses them consistently.
+
+## Sets, spaces, and collections
+- Use calligraphic uppercase for sets and collections: `\mathcal{D}`, `\mathcal{X}`, `\mathcal{Y}`, `\mathcal{B}`, `\mathcal{H}`.
+- Use blackboard bold for number systems and spaces: `\mathbb{R}`, `\mathbb{N}`, `\mathbb{Z}`, `\mathbb{C}`.
+
+## Functions and models
+- Use italic lowercase for functions and maps: `f`, `g`, `h`.
+- Use a plain function such as `f(x)` when no parameters need to be shown.
+- Use a parameterized model as `f_{\boldsymbol{\theta}}(\boldsymbol{x})` or `f(\boldsymbol{x}; \boldsymbol{\theta})` when the dependence on learnable parameters matters.
+- Use upright operator names for named transforms or procedures: `\operatorname{softmax}`, `\operatorname{diag}`, `\operatorname{rank}`.
+
+## Random variables and realizations
+- Use uppercase italic for scalar random variables: `X`, `Y`.
+- Use lowercase italic for scalar realizations: `x`, `y`.
+- Use bold lowercase for observed vectors: `\boldsymbol{x}`, `\boldsymbol{y}`.
+
+
+## Index and dimension conventions
+
+Use the following symbols by default unless a topic strongly requires something else.
+
+### Sizes and dimensions
+
+- `n`: number of samples or training examples
+- `d`: input or feature dimension
+- `m`: output dimension
+- `C`: number of classes
+- `V`: vocabulary size
+- `T`: sequence length
+- `L`: number of layers
+- `d_{\text{hid}}`: hidden dimension
+- `d_{\text{model}}`: model dimension
+
+### Indices
+- `i`: sample index
+- `j`: feature, component, or class-related index
+- `t`: time step or token position
+- `s`: second sequence position, often used with attention or pairwise sequence terms
+- `\ell`: layer index
+- `k`: optimization step or iteration index
+- `c`: class index
+### Policy
+- Use `i` for samples and keep it that way throughout the section.
+- Use `t` for time or token position and do not reuse it for temperature or threshold in the same local scope.
+- Use `\ell` for layers instead of `l` to avoid confusion with the number `1`.
+- State dimensions explicitly on first introduction of the main objects.
+### Examples
+- `\boldsymbol{x}^{(i)} \in \mathbb{R}^d`
+- `\boldsymbol{W}^{(\ell)} \in \mathbb{R}^{d_\ell \times d_{\ell-1}}`
+- `\boldsymbol{X} \in \mathbb{R}^{n \times d}`
+- `\boldsymbol{A} \in \mathbb{R}^{T \times T}`

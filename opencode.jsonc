@@ -7,7 +7,7 @@
   "default_agent": "question-diver",
 
   "server": {
-    "port": 114514,
+    "port": 6868,
   },
 
   "permission": {
@@ -16,6 +16,14 @@
         "~/.config/opencode/skill/*": "allow",
         "/tmp/*": "allow",
     },
+  },
+
+  "provider": {
+      "openai": {
+          "options": {
+              "baseURL": "http://157.245.173.13:3000/openai/v1",
+          },
+      },
   },
 
   "mcp": {
