@@ -63,7 +63,6 @@ This section governs how symbols are introduced, named, reused, and audited acro
   - `\boldsymbol{X}` for the data matrix and `X` for an unrelated random variable
   - `f` for the prediction function and `f` again for a feature index
   - `\boldsymbol{W}` for weights and `W` again for a sequence window size
-  - `T` for sequence length and `T` again for temperature or a transformation
 
 ## Allowed related reuse
 - The same base symbol may be reused only when the meanings are clearly related.
@@ -90,7 +89,6 @@ This section governs how symbols are introduced, named, reused, and audited acro
 - If a conventional symbol is already in use, choose a nearby but distinct alternative.
 - Examples:
   - if `\boldsymbol{X}` is the data matrix, use `Z` or `H` for a random variable or latent state
-  - if `T` is sequence length, use `\tau` for temperature
   - if `f` is the model, use `\phi` or `\psi` for feature maps or auxiliary transforms
 - Do not force reuse just because the letter is standard in another paper.
 
@@ -110,7 +108,6 @@ This section governs how symbols are introduced, named, reused, and audited acro
 - Flag conflicting uses such as:
   - `\boldsymbol{X}` as data matrix and `X` as unrelated random variable
   - `f` as both model and scalar feature
-  - `T` as both sequence length and temperature
   - `\mathcal{L}` as loss and `L` as number of layers in the same derivation
 
 
@@ -134,7 +131,7 @@ This section governs how symbols are introduced, named, reused, and audited acro
 ## Tensors
 - Use bold uppercase for tensors: `\boldsymbol{T}`, `\boldsymbol{H}`.
 - State tensor order and shape explicitly in prose or notation if applicable, e.g.
-  `\boldsymbol{T} \in \mathbb{R}^{n \times T \times d}` is a third-order tensor.
+  `\boldsymbol{T} \in \mathbb{R}^{n \times S \times d}` is a third-order tensor.
 - Do not rely on more decorative tensor styles unless the whole site uses them consistently.
 
 ## Sets, spaces, and collections
@@ -142,7 +139,7 @@ This section governs how symbols are introduced, named, reused, and audited acro
 - Use blackboard bold for number systems and spaces: `\mathbb{R}`, `\mathbb{N}`, `\mathbb{Z}`, `\mathbb{C}`.
 
 ## Functions and models
-- Use italic lowercase for functions and maps: `f`, `g`, `h`.
+- Use italic lowercase for functions and maps: `f`, `g`.
 - Use a plain function such as `f(x)` when no parameters need to be shown.
 - Use a parameterized model as `f_{\boldsymbol{\theta}}(\boldsymbol{x})` or `f(\boldsymbol{x}; \boldsymbol{\theta})` when the dependence on learnable parameters matters.
 - Use upright operator names for named transforms or procedures: `\operatorname{softmax}`, `\operatorname{diag}`, `\operatorname{rank}`.
@@ -164,26 +161,102 @@ Use the following symbols by default unless a topic strongly requires something 
 - `m`: output dimension
 - `C`: number of classes
 - `V`: vocabulary size
-- `T`: sequence length
+- `S`: sequence length
 - `L`: number of layers
-- `d_{\text{hid}}`: hidden dimension
-- `d_{\text{model}}`: model dimension
 
 ### Indices
+
 - `i`: sample index
-- `j`: feature, component, or class-related index
+- `j`: feature, or component
 - `t`: time step or token position
 - `s`: second sequence position, often used with attention or pairwise sequence terms
 - `\ell`: layer index
 - `k`: optimization step or iteration index
 - `c`: class index
+
 ### Policy
+
 - Use `i` for samples and keep it that way throughout the section.
 - Use `t` for time or token position and do not reuse it for temperature or threshold in the same local scope.
 - Use `\ell` for layers instead of `l` to avoid confusion with the number `1`.
+- Use `\tau` for temperature to avoid conflict with `S` for sequence length and with other common uses of `T`.
 - State dimensions explicitly on first introduction of the main objects.
-### Examples
-- `\boldsymbol{x}^{(i)} \in \mathbb{R}^d`
-- `\boldsymbol{W}^{(\ell)} \in \mathbb{R}^{d_\ell \times d_{\ell-1}}`
-- `\boldsymbol{X} \in \mathbb{R}^{n \times d}`
-- `\boldsymbol{A} \in \mathbb{R}^{T \times T}`
+
+
+# Linear algebra conventions
+
+- Treat vectors as column vectors by default unless stated otherwise.
+
+## Shapes
+
+- State shapes when first introducing vectors, matrices, and tensors.
+- Restate shapes near an equation when dimensional consistency is important to the derivation.
+- If a dimension is not obvious from context, make it explicit.
+
+## Vector orientation
+
+- Treat `\boldsymbol{x}` as a column vector by default.
+- Use `\boldsymbol{x}^\top` only when a row vector is explicitly needed.
+- Do not switch between row-vector and column-vector interpretations without saying so.
+
+## Entries, rows, and columns
+
+- Use `x_j` for the `j`-th component of a vector.
+- Use `(\boldsymbol{W})_{ij}` for the `(i,j)` entry of a matrix when entry-level notation is needed.
+- Matrix entries and vector components are scalars, so the entry itself should not be treated as a bold object.
+- Use `\boldsymbol{X}_{i,:}` and `\boldsymbol{X}_{:,j}` only when row-column indexing is necessary.
+- If rows and columns have semantic roles, state them explicitly.
+
+## Multiplication and products
+
+- Use juxtaposition for matrix-vector and matrix-matrix multiplication: `\boldsymbol{W}\boldsymbol{x}`.
+- Use parentheses when needed to make grouping and precedence clear.
+- Use `\odot` for elementwise multiplication: `\boldsymbol{x} \odot \boldsymbol{y}`.
+- Use `\otimes` only for Kronecker products or tensor products when that is truly intended.
+- Do not use the same notation for matrix multiplication and elementwise multiplication.
+
+## Transpose, inverse, and pseudoinverse
+
+- Use `^\top` for transpose.
+- Use `^{-1}` for inverse.
+- Use `^\dagger` for pseudoinverse.
+- Use inverse notation only when the inverse is well defined or the intended meaning is stated clearly.
+
+## Norms, absolute values, and inner products
+
+- Use `\lVert \boldsymbol{x} \rVert_2` for the Euclidean norm.
+- Use `\lVert \boldsymbol{W} \rVert_F` for the Frobenius norm.
+- Use `\lvert x \rvert` for absolute value.
+- Use `\langle \boldsymbol{x}, \boldsymbol{y} \rangle` for abstract inner products.
+- Use `\boldsymbol{x}^\top \boldsymbol{y}` when the Euclidean coordinate form is specifically intended.
+- Do not mix `|`, `\|`, `\lvert`, and `\lVert` inconsistently in the same post.
+
+## Identity, zero objects, and operators
+
+- Use `\boldsymbol{0}` for zero vectors or zero matrices when the shape is clear from context.
+- Use `\boldsymbol{I}` for the identity matrix, and state its shape when it is not obvious.
+- Use `\operatorname{diag}(\boldsymbol{x})` for a diagonal matrix constructed from a vector.
+- Use `\operatorname{tr}(\boldsymbol{A})` for trace.
+- Use `\operatorname{rank}(\boldsymbol{A})` for rank.
+- Use `\det(\boldsymbol{A})` for determinant when determinant notation is needed.
+
+## Concatenation
+
+- Use `[ \boldsymbol{x} ; \boldsymbol{y} ]` for vertical concatenation only if needed and define it once before using it.
+- Use horizontal concatenation notation only if it is defined explicitly and remains unambiguous.
+- Prefer block-matrix notation when it is clearer than shorthand concatenation.
+
+## Policy
+
+- Keep linear algebra notation consistent across the whole post.
+- When dimensions are important to the argument, make them explicit rather than leaving them implicit.
+- If an operation could be interpreted in more than one way, rewrite it so the intended meaning is obvious.
+
+## Audit checks
+
+- Flag missing shapes when dimensional consistency matters.
+- Flag ambiguous multiplication notation.
+- Flag inconsistent norm, absolute value, or inner product delimiters.
+- Flag undefined row, column, or entry notation.
+- Flag inverse notation used without enough context to justify it.
+
