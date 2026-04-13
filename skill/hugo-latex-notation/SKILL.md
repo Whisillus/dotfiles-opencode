@@ -38,6 +38,57 @@ Use this skill as the default notation standard for all mathematical writing in 
 - Flag trivial display equations that should be inline instead.
 - Flag display equations that are not integrated into the surrounding prose.
 
+# Equation writing
+
+This section governs how displayed equations are structured, explained, referenced, and audited after the equation mode and delimiters have been chosen.
+
+## Layout and alignment
+
+- Use a single displayed equation for one mathematical statement, definition, or result.
+- Use a multi-line aligned display for derivations, chains of equalities or inequalities, or expressions that require multiple logical steps.
+- Use only environments that are confirmed to be supported by the local Hugo math setup.
+- If local support for alignment environments is unclear, prefer a simpler locally confirmed display structure rather than relying on unverified environments.
+- Align related lines on the main relation symbol, usually `=`, `\le`, `\ge`, `\approx`, or `\Rightarrow`.
+- Keep one logical transformation per line in a derivation.
+- Do not use alignment merely to wrap a long line; each new line should represent a meaningful step.
+- If a derivation contains several conceptual phases, split it into multiple displayed equations instead of one oversized block.
+- Use piecewise notation for piecewise definitions only when the required environment is supported locally.
+- Use matrix environments only when the matrix itself is part of the mathematical content rather than just a formatting convenience.
+- Keep spacing, indentation, and alignment style consistent across the whole post.
+
+## References and numbering
+
+- Number equations only when the local Hugo setup supports numbering or referencing and the equation will actually be referenced later.
+- If numbering or equation references are not clearly supported locally, prefer unnumbered display math.
+- Do not assume that `\label`, `\ref`, or `\eqref` are available in every Hugo setup.
+- If labels are supported locally, use a consistent and descriptive label style.
+- Do not number every displayed equation by default.
+- If an equation is important enough to reference later, ensure that the surrounding prose makes that role clear.
+- Integrate equation references grammatically into the sentence rather than treating them as detached metadata.
+
+## Prose and symbol explanation
+
+- Introduce every nontrivial displayed equation with a lead-in sentence or phrase.
+- Follow important displayed equations with a brief explanation of what they state, compute, or imply.
+- Define newly introduced symbols before or immediately after the equation.
+- When several symbols are introduced together, prefer a short explanatory clause or sentence rather than leaving them implicit.
+- Do not drop a displayed equation into the text without context.
+- Treat displayed equations as part of the surrounding prose and punctuate them when needed.
+- If a derivation contains a non-obvious step, explain the reason for that step in prose.
+- Prefer explaining the role or meaning of an equation rather than merely restating its symbols in words.
+
+## Audit checks
+
+- Flag displayed equations that are introduced without prose.
+- Flag newly introduced symbols that are not defined nearby.
+- Flag long derivations written as a single unstructured display when a multi-step layout is needed.
+- Flag aligned derivations whose lines are not aligned on a meaningful relation symbol.
+- Flag displays that compress multiple logical transformations into one line.
+- Flag numbering, labels, or equation references whose local support is not confirmed.
+- Flag numbered equations that are never referenced later when numbering is used.
+- Flag use of display environments whose local support is not confirmed.
+- Flag displayed equations that are too dense and should be split into smaller units.
+
 # Symbol naming and reuse policy
 
 This section governs how symbols are introduced, named, reused, and audited across the entire document.
@@ -116,9 +167,7 @@ This section governs how symbols are introduced, named, reused, and audited acro
   - `\boldsymbol{W}_{\text{in}}`, `\boldsymbol{W}_{\text{out}}`
   - `\boldsymbol{h}^{(\ell)}`, `\boldsymbol{h}^{(\ell+1)}`
   - `p_{\text{data}}`, `p_{\boldsymbol{\theta}}`
-- Use `\text{...}` in semantic subscripts:
-  - write `\boldsymbol{W}_{\text{class}}`
-  - not `\boldsymbol{W}_{class}`
+- For semantic labels, follow `# Subscript / superscript policy` and use `\text{...}` consistently.
 
 ## When a symbol is already taken
 
@@ -187,10 +236,9 @@ This section governs how symbols are introduced, named, reused, and audited acro
 
 ## Random variables and realizations
 
-- Use uppercase italic for scalar random variables: `X`, `Y`.
-- Use lowercase italic for scalar realizations: `x`, `y`.
-- Use bold lowercase for observed vectors: `\boldsymbol{x}`, `\boldsymbol{y}`.
-
+- For detailed probability notation, follow `# Probability and statistics conventions`.
+- By default, use uppercase italic for scalar random variables, lowercase italic for scalar realizations, and bold lowercase for observed vectors when vector observations are needed.
+- Keep random-variable notation distinct from observed data notation and data-matrix notation.
 
 ## Index and dimension conventions
 
@@ -432,3 +480,104 @@ Use the following symbols by default unless a topic strongly requires something 
 - Flag ambiguous superscripts that could be read as either labels or powers.
 - Flag unreadable stacked decorations or index structures.
 - Flag code-like identifier patterns that should be rewritten in mathematical notation.
+
+
+# Probability and statistics conventions
+
+## Events and probabilities
+- Use uppercase italic letters such as `A` and `B` for events when event notation is needed.
+- Use `\mathbb{P}(A)` for the probability of an event `A`.
+- Use `\mathbb{P}(A \mid B)` for conditional probability of an event.
+- Use `\mid` for conditioning in probabilities, densities, and expectations; do not use a plain `|` for conditional notation.
+- Keep event notation distinct from random-variable notation.
+
+## Probability functions and distributions
+
+- Use lowercase `p` for a probability mass function, probability density, model distribution, or other distribution-dependent scalar quantity when the meaning is clear from context.
+- Use forms such as `p(x)`, `p(y \mid \boldsymbol{x})`, or `p(y \mid \boldsymbol{x}; \boldsymbol{\theta})` when conditioning or parameter dependence matters.
+- If several distributions appear in the same local context, distinguish them with semantic subscripts or parameter notation, e.g. `p_{\text{data}}(x)` and `p_{\boldsymbol{\theta}}(x)`.
+- Use `p(y \mid \boldsymbol{x}; \boldsymbol{\theta})` when the object is a model conditional distribution with explicit parameters.
+- When `\boldsymbol{p}` denotes a probability vector, use `p_c` for its `c`-th component.
+- Define clearly whether `p` denotes a probability mass function, density, model distribution, empirical estimate, or posterior-like quantity.
+
+## Named distributions
+
+- Use `\sim` for distribution statements, e.g. `X \sim \mathcal{N}(\mu, \sigma^2)`.
+- Use named distributions in upright operator style when appropriate, e.g. `\operatorname{Bernoulli}`, `\operatorname{Categorical}`, and similar family names.
+- Use `\mathcal{N}(\mu, \sigma^2)` for a Gaussian or normal distribution.
+- If distribution parameters have roles such as mean, variance, concentration, or scale, define them on first use.
+
+## Random variables, realizations, and samples
+
+- Use uppercase italic for scalar random variables, e.g. `X`, `Y`, `Z`.
+- Use lowercase italic for scalar realizations, e.g. `x`, `y`, `z`.
+- Use `x^{(i)}` for the `i`-th observed scalar sample when sample indexing is needed.
+- Use `\boldsymbol{x}^{(i)}` for the `i`-th observed vector sample.
+- If random vectors are needed, introduce them explicitly and keep the notation distinct from observed vectors and data matrices.
+- If `\boldsymbol{X}` already denotes a data matrix, avoid also using `X` or `\boldsymbol{X}` for another unrelated random object in the same local context.
+- If a random vector is needed near a data matrix `\boldsymbol{X}`, prefer a different base symbol and define it explicitly.
+
+## Conditioning and independence
+
+- Use `\mathbb{P}(A \mid B)` for conditional event probabilities.
+- Use `p(y \mid \boldsymbol{x})` or `p(y \mid \boldsymbol{x}; \boldsymbol{\theta})` for conditional distributions.
+- Use `\mathbb{E}[X \mid Y]` for conditional expectation.
+- Use `X \perp Y` for independence when independence notation is needed.
+- Use `X \perp Y \mid Z` for conditional independence when that distinction matters.
+- Define clearly what is being conditioned on whenever conditional notation is introduced.
+
+## Expectations and statistical operators
+
+- Use `\mathbb{E}[X]` for expectation.
+- Use `\mathbb{E}[f(X)]` for the expectation of a transformed random variable.
+- Use subscripted expectation notation such as `\mathbb{E}_{X \sim p}[f(X)]` when the underlying distribution must be explicit.
+- Use `\operatorname{Var}(X)` for variance.
+- Use `\operatorname{Cov}(X, Y)` for covariance.
+- Use upright operator style consistently for statistical operators such as `\operatorname{Var}` and `\operatorname{Cov}`.
+- If correlation notation is needed, use an upright operator form such as `\operatorname{Corr}(X, Y)` and define it explicitly.
+
+## Means, variances, and covariance
+
+- Use `\mu` for a scalar mean.
+- Use `\sigma^2` for a scalar variance.
+- Use `\boldsymbol{\mu}` for a vector mean.
+- Use `\boldsymbol{\Sigma}` for a covariance matrix.
+- State clearly whether a quantity is scalar, vector-valued, or matrix-valued when that is not obvious from context.
+- If a variance, covariance, or mean is estimated rather than population-level, mark that distinction explicitly.
+
+## Empirical and estimated quantities
+
+- Use `\bar{x}` for a scalar sample mean.
+- Use `\bar{\boldsymbol{x}}` for a vector sample mean.
+- Use `\hat{p}` for an estimated probability when a scalar estimate is intended.
+- Use hats for estimated statistics, e.g. `\hat{\mu}` and `\hat{\boldsymbol{\Sigma}}`.
+- Distinguish empirical quantities from population quantities when both appear in the same discussion.
+- If both a distribution and its estimate appear locally, make the distinction explicit rather than relying on context alone.
+
+## Probability notation in CS and ML writing
+
+- Keep probability notation distinct from optimization notation and loss notation.
+- Do not use `\mathcal{L}` for both loss and likelihood in the same local context.
+- If likelihood notation is needed, prefer expressing it through the probability model directly, e.g. `p(x; \boldsymbol{\theta})` or `p_{\boldsymbol{\theta}}(x)`, unless a separate likelihood symbol is defined explicitly.
+- Keep model distributions, empirical distributions, and posterior-like quantities visually distinct, e.g. `p_{\text{data}}`, `p_{\boldsymbol{\theta}}`, and other clearly labeled forms.
+- If the same section uses both probability vectors and probability functions, define the distinction explicitly between `\boldsymbol{p}` and `p(\cdot)`.
+
+## Policy
+
+- Keep probability notation, statistical notation, and data notation semantically distinct.
+- Define whether a symbol denotes a random variable, realization, sample, parameter, or statistic on first use.
+- Define whether a probability expression is unconditional, conditional, parameterized, empirical, or estimated when that distinction matters.
+- Keep scalar, vector, and matrix statistical quantities visually distinct.
+- If notation from a source paper conflicts with this house style, follow the user or source convention only if the distinction remains explicit and consistent locally.
+
+## Audit checks
+- Flag ambiguous uses of `p` whose meaning is not clear from context.
+- Flag inconsistent use of random variables, realizations, and samples.
+- Flag undefined conditioning variables or parameters in conditional probabilities or expectations.
+- Flag use of plain `|` instead of `\mid` for conditional probability, density, or expectation notation.
+- Flag covariance, variance, expectation, or correlation notation written inconsistently with the house operator style.
+- Flag reuse of data-matrix symbols as unrelated random objects in the same local context.
+- Flag probability-vector notation and probability-function notation that are used together without an explicit distinction.
+- Flag likelihood notation that conflicts with the established use of `\mathcal{L}` for loss or objective notation.
+- Flag empirical and population quantities that are not clearly distinguished when both are present.
+
