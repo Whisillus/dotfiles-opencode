@@ -15,7 +15,7 @@ tools:
   task: false
 permission:
   bash:
-    "*": "deny"
+    "*": "ask"
     "ls *": "allow"
     "pwd": "allow"
     "find *": "allow"
