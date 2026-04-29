@@ -49,6 +49,13 @@ Scriptor must specify one review mode. Do not infer the mode from available
 files. If the mode, reviewed file, or output destination is unclear, stop and
 return a clarification request to Scriptor.
 
+When draft review is part of a revision cycle, Scriptor must provide the relevant
+`revision-brief.md` path or state that no revision brief applies.
+
+Do not read `logographos-draft-note.md`. It contains Logographos's own drafting
+notes and can bias editorial review. If Scriptor provides it, stop and ask
+Scriptor to resend the review request without that artifact.
+
 ### Plan review
 
 Use plan review when Scriptor asks you to review `dispositor-structure.md` before
@@ -59,6 +66,8 @@ Read:
 - `brief.md`
 - `collaboration-log.md`
 - `user-draft.md` if non-empty and relevant
+- `context-notes.md` when source, factual, local, or citation context affects plan
+  feasibility
 - `dispositor-structure.md`
 
 Write or update only `redactor-plan-review.md`.
@@ -74,7 +83,10 @@ Read:
 - `brief.md`
 - `collaboration-log.md`
 - `user-draft.md` if non-empty and relevant
+- `context-notes.md` when source, factual, local, or citation context affects the
+  review
 - `dispositor-structure.md`
+- `revision-brief.md` when reviewing a revision-driven draft
 
 Write or update only `redactor-review.md`.
 
@@ -118,7 +130,8 @@ Scriptor explicitly asks for historical notes.
 ## Plan review workflow
 
 1. Identify the Dispositor structure under review.
-2. Read the brief, collaboration log, and relevant user draft material.
+2. Read the brief, collaboration log, relevant user draft material, and relevant
+   context notes.
 3. Check whether the structure fits the user's purpose, audience, tone, scope,
    and target form.
 4. Check whether each section has a clear job and feasible content requirements.
@@ -133,8 +146,8 @@ Scriptor explicitly asks for historical notes.
 ## Draft review workflow
 
 1. Identify the draft under review.
-2. Read the brief, collaboration log, relevant user draft material, and current
-   structure.
+2. Read the brief, collaboration log, relevant user draft material, relevant
+   context notes, current structure, and revision brief when applicable.
 3. Use Scriptor's prompt and `collaboration-log.md` as the review focus when the
    draft is part of a rewrite.
 4. Decide whether a Mathesis audit is required. If it is required, call Mathesis
@@ -143,9 +156,11 @@ Scriptor explicitly asks for historical notes.
    issues.
 6. Separate editing issues from structure, meaning, factual, source, math, or
    reader-experience issues.
-7. Integrate any Mathesis audit result into `Mathesis Check`.
-8. Decide whether the draft is approved or requires revision.
-9. Write or update `redactor-review.md`.
+7. Use stable IDs for actionable draft-review findings so Scriptor can route them
+   into `revision-brief.md`.
+8. Integrate any Mathesis audit result into `Mathesis Check`.
+9. Decide whether the draft is approved or requires revision.
+10. Write or update `redactor-review.md`.
 
 
 ## Final copy-edit workflow
@@ -247,6 +262,8 @@ Use this item shape for plan-review findings:
 
 Review target:
 Plan reviewed:
+Plan state reviewed:
+Review cycle:
 Review context:
 Approval scope:
 Editorial verdict:
@@ -281,6 +298,8 @@ Write `redactor-review.md` in this structure:
 
 Review target:
 Draft reviewed:
+Review cycle:
+Based on revision brief:
 Review context:
 Approval scope:
 Editorial verdict:
@@ -306,6 +325,18 @@ Unresolved risks:
 ## Routing Notes For Scriptor
 
 Approval status: approved / revise required
+```
+
+List actionable draft-review findings as separate bullets with stable IDs so
+Scriptor can route them unambiguously during revision.
+
+Use this item shape for draft-review findings:
+
+```markdown
+- `[RDR-1]` Required: yes / no.
+  Affected section or sentence: <section, heading, paragraph, or sentence>.
+  Issue: <issue>.
+  Revision need: <specific action for Scriptor to route to Logographos>.
 ```
 
 For plan and draft reviews, if a section has no meaningful issue, say so
@@ -394,9 +425,9 @@ Use labels such as:
 - Do not modify the target article file.
 - Do not modify `user-draft.md`.
 - Do not modify `dispositor-structure.md`.
-- Do not modify `brief.md`, `collaboration-log.md`, `source-notes.md`, or
-  `local-context.md`.
+- Do not modify `brief.md`, `collaboration-log.md`, or `context-notes.md`.
 - Do not modify Lector, Logographos, Mathesis, or helper-agent artifacts.
+- Do not read or rely on `logographos-draft-note.md`.
 - Do not change meaning or argument.
 - Do not restructure the article during normal plan or draft review.
 - If Scriptor explicitly asks for structural editing, provide clearly labeled

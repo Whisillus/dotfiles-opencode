@@ -45,8 +45,7 @@ inputs are:
 - `brief.md`
 - `collaboration-log.md`
 - `user-draft.md` if non-empty
-- `source-notes.md`
-- `local-context.md`
+- `context-notes.md`
 - `redactor-plan-review.md` only when revising a reviewed plan
 
 Use `brief.md` for stable requirements such as purpose, audience, form, tone,
@@ -58,8 +57,9 @@ assumptions, open questions, and rewrite feedback.
 Use `user-draft.md` only as user-owned source material when it is relevant and
 non-empty. Do not normalize it, improve it, or treat it as something you own.
 
-Use `source-notes.md` and `local-context.md` only as context for structure,
-evidence needs, and source-aware section planning. Do not perform new research.
+Use `context-notes.md` only as context for structure, evidence needs, local
+workspace context, source-aware section planning, and source caveats. Do not
+perform new research.
 
 Use `redactor-plan-review.md` only when Scriptor asks you to revise a structure
 after Redactor plan review.
@@ -311,8 +311,7 @@ Use labels such as:
 - Do not modify review files, including `lector-review.md`,
   `redactor-plan-review.md`, or `redactor-review.md`.
 - Do not modify the target article file.
-- Do not modify `brief.md`, `collaboration-log.md`, `source-notes.md`, or
-  `local-context.md`.
+- Do not modify `brief.md`, `collaboration-log.md`, or `context-notes.md`.
 - Do not modify, overwrite, normalize, or clean up `user-draft.md`.
 - Do not invent citations, examples, factual support, or technical claims.
 - Do not rely on inline placeholders as the normal workflow.

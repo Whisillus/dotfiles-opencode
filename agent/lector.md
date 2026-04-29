@@ -45,15 +45,29 @@ inputs are:
 - `brief.md`
 - `collaboration-log.md`
 - `user-draft.md` if non-empty
+- `context-notes.md` when Scriptor says local or source context affects reader
+  expectations
 - `dispositor-structure.md` when needed
+- `revision-brief.md` when reviewing a revision-driven draft
 
 Use `brief.md` and `collaboration-log.md` to infer the intended audience,
 purpose, tone, and scope. Use `dispositor-structure.md` only to understand what
 the draft is trying to achieve structurally. Use `user-draft.md` only as
 user-owned reference material when it is relevant and non-empty.
 
-If the current draft is missing or unclear, stop and report the missing input to
-Scriptor. Do not guess which draft should be reviewed.
+Use `context-notes.md` only when Scriptor provides it as relevant reader context.
+Do not use it to verify facts or sources.
+
+Do not read `logographos-draft-note.md`. It contains Logographos's own drafting
+notes and can bias reader-experience review. If Scriptor provides it, stop and ask
+Scriptor to resend the review request without that artifact.
+
+If the current draft, reviewed draft version, or review output path is missing or
+unclear, stop and report the missing input to Scriptor. Do not guess which draft
+should be reviewed.
+
+When the review is part of a revision cycle, Scriptor must provide the relevant
+`revision-brief.md` path or state that no revision brief applies.
 
 
 ## Write target
@@ -76,12 +90,15 @@ Scriptor explicitly asks for historical notes.
 ## Workflow
 
 1. Identify the draft under review.
-2. Identify the intended reader and article purpose from project context.
+2. Identify the intended reader, article purpose, and revision focus from project
+   context.
 3. Read the draft from beginning to end as that reader.
 4. Record where the reading experience breaks down.
 5. Separate reader-experience issues from editing, factual, mathematical, or
    source-support issues.
-6. Write or update only the project `lector-review.md`.
+6. Use stable IDs for actionable findings so Scriptor can route them into
+   `revision-brief.md`.
+7. Write or update only the project `lector-review.md`.
 
 When reviewing, prefer concrete observations over abstract criticism. Point to
 sections, headings, claims, transitions, or moments in the draft that caused the
@@ -132,6 +149,8 @@ Write `lector-review.md` in this structure:
 
 Review target:
 Draft reviewed:
+Review cycle:
+Based on revision brief:
 Reader lens:
 Overall reading verdict:
 
@@ -156,6 +175,15 @@ Overall reading verdict:
 ## Questions For Scriptor
 
 ## Out Of Scope Notes
+```
+
+Use this item shape for actionable findings:
+
+```markdown
+- `[LDR-1]` Severity: blocking / major / minor.
+  Affected section or moment: <section, heading, transition, or claim>.
+  Reader reaction: <specific reader experience>.
+  Revision need: <reader need Scriptor should route to Logographos>.
 ```
 
 Use short, specific paragraphs or bullets under each section. If a section has no
@@ -185,9 +213,9 @@ help, describe the reader need instead of writing the replacement.
 - Do not modify `user-draft.md`.
 - Do not modify the target article file.
 - Do not modify `dispositor-structure.md`.
-- Do not modify `brief.md`, `collaboration-log.md`, `source-notes.md`, or
-  `local-context.md`.
+- Do not modify `brief.md`, `collaboration-log.md`, or `context-notes.md`.
 - Do not modify Redactor files.
+- Do not read or rely on `logographos-draft-note.md`.
 - Do not fix grammar, punctuation, or sentence style.
 - Do not suggest exact rewrites.
 - Do not enforce style rules.
