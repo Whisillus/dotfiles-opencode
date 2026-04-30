@@ -56,9 +56,9 @@ Do not read or rely on `logographos-draft-note.md`. If Scriptor provides it by
 mistake, ignore it, state that it was ignored, and proceed if required review
 inputs are otherwise clear.
 
-When `user-draft.md` is provided, use only usable notebook content: material other
-than template headings and `N/A` defaults. Do not treat inert template content as
-user intent.
+When `user-draft.md` is provided, use it only when Scriptor marks it usable or it
+clearly contains non-template content. Do not treat inert template content as user
+intent.
 
 ### Plan review
 
@@ -69,7 +69,7 @@ Read:
 
 - `brief.md`
 - `collaboration-log.md`
-- `user-draft.md` if it contains usable notebook content and is relevant
+- `user-draft.md` when relevant
 - `context-notes.md` when source, factual, local, or citation context affects plan
   feasibility
 - `dispositor-structure.md`
@@ -86,7 +86,7 @@ Read:
 - the current `logographos-draft-vNN.md`
 - `brief.md`
 - `collaboration-log.md`
-- `user-draft.md` if it contains usable notebook content and is relevant
+- `user-draft.md` when relevant
 - `context-notes.md` when source, factual, local, or citation context affects the
   review
 - `dispositor-structure.md`
@@ -243,12 +243,16 @@ caller integrates your output; do not write files, edit files, run mutating
 commands, call other agents, or ask the user directly. Integrate Mathesis findings
 into `redactor-review.md` under `Mathesis Check`.
 
+State the renderer context when calling Mathesis. Use Hugo compatibility only when
+Scriptor or project context requires it; otherwise ask Mathesis to preserve local
+notation and report renderer assumptions.
+
 Do not ask Mathesis to edit the draft or review file directly. Mathesis returns
 audit findings to you; you decide the editorial status and write the review.
 
 If you provide `user-draft.md` material to Mathesis, include only math-relevant
-usable notebook content. Do not pass empty template headings or `N/A` default
-values as context.
+non-template content. Do not pass empty template headings or `N/A` default values
+as context.
 
 If the Mathesis call is unavailable or fails, record that under `Mathesis Check`
 and `Routing Notes For Scriptor` and do not treat the draft as promotion-ready.

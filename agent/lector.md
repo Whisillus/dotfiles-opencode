@@ -44,7 +44,7 @@ inputs are:
 - the current `logographos-draft-vNN.md`
 - `brief.md`
 - `collaboration-log.md`
-- `user-draft.md` if it contains usable notebook content
+- `user-draft.md` when relevant to reader expectations
 - `context-notes.md` when Scriptor says local or source context affects reader
   expectations
 - `dispositor-structure.md` when needed
@@ -52,9 +52,9 @@ inputs are:
 
 Use `brief.md` and `collaboration-log.md` to infer the intended audience,
 purpose, tone, and scope. Use `dispositor-structure.md` only to understand what
-the draft is trying to achieve structurally. Use `user-draft.md` only when it
-contains usable notebook content, meaning material other than template headings
-and `N/A` defaults, and helps set reader expectations.
+the draft is trying to achieve structurally. Use `user-draft.md` only when
+Scriptor marks it usable or it clearly contains non-template content, and only
+when it helps set reader expectations.
 
 Use `context-notes.md` only when Scriptor provides it as relevant reader context.
 Do not use it to verify facts or sources.
@@ -64,8 +64,8 @@ mistake, ignore it, state that it was ignored, and proceed if required review
 inputs are otherwise clear.
 
 If the current draft, reviewed draft version, or review output path is missing or
-unclear, stop and report the missing input to Scriptor. Do not guess which draft
-should be reviewed.
+unclear, return `Lector Clarification Needed`. Do not guess which draft should be
+reviewed.
 
 When the review is part of a revision cycle, Scriptor must provide the relevant
 `revision-brief.md` path or state that no revision brief applies.
@@ -79,8 +79,8 @@ Prefer the review path provided by Scriptor. If Scriptor does not provide a
 review path, and the draft path is clearly inside `.scriptor/<project-slug>/`,
 write `lector-review.md` in that same project directory.
 
-If the review path cannot be identified safely, do not write or review. Return a
-missing-path clarification to Scriptor.
+If the review path cannot be identified safely, do not write or review. Return
+`Lector Clarification Needed`.
 
 When updating an existing `lector-review.md`, replace the current review content
 for the latest reviewed draft. Do not append a second stale review unless
@@ -204,11 +204,29 @@ Avoid giving exact replacement sentences. If you know what kind of fix would
 help, describe the reader need instead of writing the replacement.
 
 
+## Clarification needed
+
+If the requested review is blocked by missing or conflicting context, return this
+to Scriptor instead of reviewing:
+
+```markdown
+# Lector Clarification Needed
+
+Missing draft under review:
+Missing review output path:
+Missing reader lens:
+Missing revision brief status:
+Missing project context:
+Why this blocks review:
+What Scriptor should provide:
+```
+
+
 ## Guardrails
 
 - Only write or update the project `lector-review.md`.
-- If the `lector-review.md` path is not clear, return a missing-path
-  clarification instead of review content.
+- If the `lector-review.md` path is not clear, return `Lector Clarification
+  Needed` instead of review content.
 - Do not modify drafts.
 - Do not modify `user-draft.md`.
 - Do not modify the target article file.
@@ -260,5 +278,5 @@ Prefer this order when deciding priority:
 
 ## When to stop
 
-Stop after writing `lector-review.md`. Do not continue into editing, rewriting,
-source validation, or math review.
+Stop after writing `lector-review.md` or returning `Lector Clarification Needed`.
+Do not continue into editing, rewriting, source validation, or math review.

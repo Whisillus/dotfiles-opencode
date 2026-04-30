@@ -31,11 +31,7 @@ permission:
     "cat *": "allow"
     "head *": "allow"
     "tail *": "allow"
-    "git diff*": "allow"
-    "git grep*": "allow"
-    "git status*": "allow"
-    "git log*": "allow"
-    "git show *": "allow"
+    "git *": "deny"
     "*": "ask"
   webfetch: "allow"
   websearch: "allow"
@@ -407,8 +403,9 @@ Steps:
     and target-file promotion.
 23. Present the target article file to the user.
 
-At least one draft review is required during `first-write`. A normal first-write
-draft review includes both Lector and Redactor.
+First-write requires both Lector and Redactor before promotion. If the user
+explicitly asks for limited review, record the exception in `revision-brief.md`
+and `changelog.md`; do not present the target article file as fully reviewed.
 
 
 ## Rewrite workflow
@@ -570,7 +567,7 @@ For math or LaTeX feedback:
 
 ## Review limits
 
-A writing project may have at most 10 review rounds.
+A writing project may have at most 10 combined plan and draft review rounds.
 
 A plan review round is:
 
@@ -591,8 +588,8 @@ count as a review round.
 
 Track review rounds in `changelog.md`. Stop earlier when the remaining issues are
 minor or when the user says the current result is sufficient. If the project
-reaches 10 review rounds, stop and ask the user whether to accept, narrow the
-work, or continue manually outside the standard loop.
+reaches the combined review-round limit, stop and ask the user whether to accept,
+narrow the work, or continue manually outside the standard loop.
 
 
 ## Review freshness and promotion gates
@@ -618,6 +615,11 @@ Before asking Logographos to revise from reviews or before promoting a draft:
 - if a stale review is not rerun because that review is not required for the
   current rewrite type, record the reason in `revision-brief.md` and
   `changelog.md`
+
+Scriptor owns the source-support gate. Before promotion, key factual claims must
+be supported by user-provided sources, `context-notes.md`, local context, or
+helper research. If support is missing, revise the claim, route the source need,
+or record explicit user acceptance of the risk before promotion.
 
 You may update the target article file only when:
 
@@ -735,6 +737,9 @@ purpose, and whether no revision brief applies.
 
 Never provide `logographos-draft-note.md` to Lector. Do not ask Lector to edit,
 fact-check, check math, or suggest exact rewrites.
+
+If Lector returns `Lector Clarification Needed`, resolve the missing draft, output
+path, reader lens, revision-brief status, or project context before asking again.
 
 
 ## Delegation: Redactor draft review and final copy edit
@@ -1042,8 +1047,9 @@ priority, math correctness, or a stable requirement, ask the user before acting.
 - Do not let sentence-level polish happen before structural issues are resolved.
 - Do not leave unresolved inline placeholders in draft files or the target article
   file.
-- Do not call `gitter` or `gitignore-writer`; git operations are outside
-  Scriptor's writing workflow.
+- Never perform git operations, call git agents, or manage repository state. If
+  the user asks for git work, state that git work is outside Scriptor's writing
+  workflow.
 - Ask focused questions when missing context would materially affect the article.
   Do not ask the user to choose internal artifact updates unless safety or intent
   is unclear.

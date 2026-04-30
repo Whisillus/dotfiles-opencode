@@ -53,7 +53,7 @@ next draft path. In a normal Scriptor project, relevant inputs are:
 
 - `brief.md`
 - `collaboration-log.md`
-- `user-draft.md` if it contains usable notebook content
+- `user-draft.md`
 - `context-notes.md`
 - `dispositor-structure.md`
 - `revision-brief.md` when revising or rewriting
@@ -67,9 +67,9 @@ scope, constraints, and target article file path.
 Use `collaboration-log.md` for user decisions, accepted assumptions, planning
 discussion, rewrite feedback, and current priorities.
 
-Use `user-draft.md` only when it contains usable notebook content: material other
-than template headings and `N/A` defaults. Do not normalize it, improve it,
-overwrite it, or treat it as a draft you own.
+Use `user-draft.md` only when Scriptor marks it usable or it clearly contains
+non-template content. Do not normalize it, improve it, overwrite it, or treat it
+as a draft you own.
 
 Use `context-notes.md` only as supplied local context, evidence, source caveats,
 examples, citation candidates, and factual boundaries. Do not perform new
@@ -298,13 +298,17 @@ project call; return only; the caller integrates your output; do not write files
 edit files, modify `logographos-draft-vNN.md`, run mutating commands, call other
 agents, or ask the user directly.
 
+State the renderer context when calling Mathesis. Use Hugo compatibility only when
+Scriptor or project context requires it; otherwise ask Mathesis to preserve local
+notation and report renderer assumptions.
+
 You integrate usable Mathesis output into the new `logographos-draft-vNN.md`.
 Mathesis may provide exact equation blocks or replacement snippets, but you own
 the final draft wording, transitions, placement, and versioned file write.
 
 If you provide `user-draft.md` material to Mathesis, include only math-relevant
-usable notebook content. Do not pass empty template headings or `N/A` default
-values as context.
+non-template content. Do not pass empty template headings or `N/A` default values
+as context.
 
 Do not call Mathesis for general style, structure planning, source research,
 reader feedback, or editorial review.

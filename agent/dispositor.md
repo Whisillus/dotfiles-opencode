@@ -44,7 +44,7 @@ inputs are:
 
 - `brief.md`
 - `collaboration-log.md`
-- `user-draft.md` if it contains usable notebook content
+- `user-draft.md`
 - `context-notes.md`
 - `redactor-plan-review.md` only when revising a reviewed plan
 
@@ -54,9 +54,9 @@ scope, constraints, and target article file path.
 Use `collaboration-log.md` for planning discussion, user decisions, accepted
 assumptions, open questions, and rewrite feedback.
 
-Use `user-draft.md` only when it contains usable notebook content: material other
-than template headings and `N/A` defaults. Do not normalize it, improve it, or
-treat it as something you own.
+Use `user-draft.md` only when Scriptor marks it usable or it clearly contains
+non-template content. Do not normalize it, improve it, or treat it as something
+you own.
 
 Use `context-notes.md` only as context for structure, evidence needs, local
 workspace context, source-aware section planning, and source caveats. Do not
