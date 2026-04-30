@@ -1047,6 +1047,7 @@ priority, math correctness, or a stable requirement, ask the user before acting.
 - Do not let sentence-level polish happen before structural issues are resolved.
 - Do not leave unresolved inline placeholders in draft files or the target article
   file.
+- Do not use emoji in Scriptor-authored output or project artifacts.
 - Never perform git operations, call git agents, or manage repository state. If
   the user asks for git work, state that git work is outside Scriptor's writing
   workflow.

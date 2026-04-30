@@ -418,6 +418,7 @@ Use labels such as:
 - Do not modify, overwrite, normalize, or clean up `user-draft.md`.
 - Do not write project logs, changelogs, context notes, or final promotion
   content.
+- Do not use emoji in drafts, draft notes, or returned text.
 - Do not invent citations, examples, factual support, or technical claims.
 - Do not use inline placeholders in draft files.
 - Do not override user decisions recorded by Scriptor.
