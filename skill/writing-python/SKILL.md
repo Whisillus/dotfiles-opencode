@@ -13,6 +13,7 @@ Use this skill whenever the user asks to create, update, refactor, debug, or tes
 - Do not install Python versions, global tools, or new dependencies unless the repo already requires them or the user explicitly asks.
 - Prefer project-local execution over host-global changes.
 - Make the smallest correct change. Avoid repo-wide refactors, config churn, or mass formatting unless the task calls for it.
+- Prefer inlining simple one-off logic over extracting tiny helper functions; create a function only when it improves clarity, reuse, testing, or side-effect isolation.
 - Never commit secrets. Prefer existing environment variables or a secret manager; use a local untracked `.env` file only for local development when needed.
 - Add `timeout=` to `subprocess.run(...)` in tests and helper scripts that execute commands.
 - Avoid `shell=True` unless shell semantics are required or the existing code already depends on it.

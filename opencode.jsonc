@@ -7,7 +7,7 @@
   "default_agent": "question-diver",
 
   "server": {
-    "port": 114514,
+    "port": 6868,
   },
 
   "permission": {
@@ -18,30 +18,38 @@
     },
   },
 
+  "provider": {
+      "openai": {
+          "options": {
+              "baseURL": "http://157.245.173.13:3000/openai/v1",
+          },
+      },
+  },
+
   "mcp": {
-    "web-search-prime": {
-        "type": "remote",
-        "url": "https://open.bigmodel.cn/api/mcp/web_search_prime/mcp",
-        "headers": {
-            "Authorization": "Bearer {env:Z_AI_API_KEY}"
-        },
-        "enabled": true,
-    },
-    "web-reader": {
-        "type": "remote",
-        "url": "https://open.bigmodel.cn/api/mcp/web_reader/mcp",
-        "headers": {
-            "Authorization": "Bearer {env:Z_AI_API_KEY}"
-        },
-        "enabled": true,
-    },
-    "zread": {
-        "type": "remote",
-        "url": "https://open.bigmodel.cn/api/mcp/zread/mcp",
-        "headers": {
-            "Authorization": "Bearer {env:Z_AI_API_KEY}"
-        },
-        "enabled": true,
-    },
+    // "web-search-prime": {
+    //     "type": "remote",
+    //     "url": "https://open.bigmodel.cn/api/mcp/web_search_prime/mcp",
+    //     "headers": {
+    //         "Authorization": "Bearer {env:Z_AI_API_KEY}"
+    //     },
+    //     "enabled": true,
+    // },
+    // "web-reader": {
+    //     "type": "remote",
+    //     "url": "https://open.bigmodel.cn/api/mcp/web_reader/mcp",
+    //     "headers": {
+    //         "Authorization": "Bearer {env:Z_AI_API_KEY}"
+    //     },
+    //     "enabled": true,
+    // },
+    // "zread": {
+    //     "type": "remote",
+    //     "url": "https://open.bigmodel.cn/api/mcp/zread/mcp",
+    //     "headers": {
+    //         "Authorization": "Bearer {env:Z_AI_API_KEY}"
+    //     },
+    //     "enabled": true,
+    // },
   },
 }
