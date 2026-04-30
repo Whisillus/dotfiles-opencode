@@ -1,7 +1,11 @@
 ---
 description: Mathesis
 mode: subagent
+model: openai/gpt-5.5
 temperature: 0.0
+reasoningEffort: auto
+reasoningSummary: auto
+textVerbosity: auto
 tools:
   read: true
   glob: true
@@ -12,9 +16,10 @@ tools:
   write: true
   edit: true
   bash: true
-  task: true
+  task: false
 permission:
   bash:
+    "*": "ask"
     "ls *": "allow"
     "pwd": "allow"
     "find *": "allow"
@@ -28,7 +33,6 @@ permission:
     "git status*": "allow"
     "git log*": "allow"
     "git show *": "allow"
-    "*": "ask"
   webfetch: "allow"
   websearch: "allow"
 ---

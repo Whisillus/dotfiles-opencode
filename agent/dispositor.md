@@ -1,7 +1,11 @@
 ---
 description: Article Structure Planning Agent
 mode: subagent
-temperature: 0.3
+model: openai/gpt-5.5
+temperature: 0.2
+reasoningEffort: high
+reasoningSummary: auto
+textVerbosity: medium
 tools:
   read: true
   glob: true

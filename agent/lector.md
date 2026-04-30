@@ -1,7 +1,11 @@
 ---
 description: Reader Experience Review Agent
 mode: subagent
+model: openai/gpt-5.5
 temperature: 0.4
+reasoningEffort: xhigh
+reasoningSummary: auto
+textVerbosity: medium
 tools:
   read: true
   glob: true

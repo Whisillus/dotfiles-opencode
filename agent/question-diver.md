@@ -1,7 +1,11 @@
 ---
 description: Question Diver research agent
-mode: primary
+mode: all
+model: openai/gpt-5.5
 temperature: 0.1
+reasoningEffort: xhigh
+reasoningSummary: auto
+textVerbosity: medium
 tools:
   read: true
   glob: true

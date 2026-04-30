@@ -1,7 +1,11 @@
 ---
 description: Editorial Review Agent
 mode: subagent
+model: openai/gpt-5.5
 temperature: 0.2
+reasoningEffort: xhigh
+reasoningSummary: auto
+textVerbosity: medium
 tools:
   read: true
   glob: true
@@ -16,8 +20,8 @@ tools:
   task: true
 permission:
   task:
-    "mathesis": allow
     "*": deny
+    "mathesis": allow
 ---
 
 # Redactor
