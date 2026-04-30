@@ -53,7 +53,7 @@ next draft path. In a normal Scriptor project, relevant inputs are:
 
 - `brief.md`
 - `collaboration-log.md`
-- `user-draft.md` if non-empty
+- `user-draft.md` if it contains usable notebook content
 - `context-notes.md`
 - `dispositor-structure.md`
 - `revision-brief.md` when revising or rewriting
@@ -67,9 +67,9 @@ scope, constraints, and target article file path.
 Use `collaboration-log.md` for user decisions, accepted assumptions, planning
 discussion, rewrite feedback, and current priorities.
 
-Use `user-draft.md` only as user-owned source material when it is relevant and
-non-empty. Do not normalize it, improve it, overwrite it, or treat it as a draft
-you own.
+Use `user-draft.md` only when it contains usable notebook content: material other
+than template headings and `N/A` defaults. Do not normalize it, improve it,
+overwrite it, or treat it as a draft you own.
 
 Use `context-notes.md` only as supplied local context, evidence, source caveats,
 examples, citation candidates, and factual boundaries. Do not perform new
@@ -84,12 +84,6 @@ revision instructions when Scriptor asks for a revised or rewritten draft.
 Do not read `redactor-plan-review.md` as your plan-approval source. Scriptor must
 state that the current Dispositor plan passed required Redactor plan review before
 first drafting.
-
-If Scriptor's request, requested mode, plan approval, base source, required
-inputs, destination draft path, destination version, or revision instructions are
-unclear, stop and return a clarification request to Scriptor instead of guessing
-or continuing.
-
 
 ## Write target
 
@@ -137,15 +131,10 @@ return the note content to Scriptor instead of placing notes in the draft file.
 9. Call Mathesis when math or LaTeX writing, repair, notation clarity, or equation
    integration is required.
 10. Integrate Mathesis output into the draft when Mathesis returns usable content.
-11. If unresolved source, structure, math, or instruction issues remain, handle
-   them according to the clarification and draft-note rules below.
+11. If unresolved source, structure, math, or instruction issues remain, use the
+    clarification or draft-note rules below.
 12. Write only the requested new `logographos-draft-vNN.md` file and, if needed,
-   `logographos-draft-note.md`.
-
-If Scriptor's requested mode, destination version, base source, required context,
-revision instruction, or plan-approval status is unclear, return a clarification
-request to Scriptor before drafting. Do not default to first draft or rewrite.
-
+    `logographos-draft-note.md`.
 
 ## First draft mode
 
@@ -302,9 +291,20 @@ Call Mathesis when:
 - existing math needs repair before it can be integrated into the new draft
 - notation clarity or renderer compatibility matters for the draft
 
-Ask Mathesis to return math-ready prose, equations, repairs, or notation advice
-to you. Do not ask Mathesis to write project artifacts. Integrate usable Mathesis
-output into the new `logographos-draft-vNN.md`.
+Ask Mathesis to return math-ready prose, equations, exact replacement snippets,
+repairs, notation advice, findings, or clarifying questions to you. Every
+Mathesis prompt in a Scriptor project must explicitly say: this is a Scriptor
+project call; return only; the caller integrates your output; do not write files,
+edit files, modify `logographos-draft-vNN.md`, run mutating commands, call other
+agents, or ask the user directly.
+
+You integrate usable Mathesis output into the new `logographos-draft-vNN.md`.
+Mathesis may provide exact equation blocks or replacement snippets, but you own
+the final draft wording, transitions, placement, and versioned file write.
+
+If you provide `user-draft.md` material to Mathesis, include only math-relevant
+usable notebook content. Do not pass empty template headings or `N/A` default
+values as context.
 
 Do not call Mathesis for general style, structure planning, source research,
 reader feedback, or editorial review.
@@ -313,6 +313,9 @@ If Mathesis is unavailable, fails, or returns unresolved uncertainty, do not
 pretend the math is resolved. If the issue blocks safe drafting, return
 `Logographos Clarification Needed`. If the draft can proceed with a visible
 caveat, record the unresolved issue in `logographos-draft-note.md`.
+
+If Mathesis violates return-only behavior, ignore any claimed file changes and
+report the issue to Scriptor; do not treat the math as resolved.
 
 
 ## Source and evidence discipline

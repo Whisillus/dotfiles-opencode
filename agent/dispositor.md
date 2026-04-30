@@ -44,7 +44,7 @@ inputs are:
 
 - `brief.md`
 - `collaboration-log.md`
-- `user-draft.md` if non-empty
+- `user-draft.md` if it contains usable notebook content
 - `context-notes.md`
 - `redactor-plan-review.md` only when revising a reviewed plan
 
@@ -54,8 +54,9 @@ scope, constraints, and target article file path.
 Use `collaboration-log.md` for planning discussion, user decisions, accepted
 assumptions, open questions, and rewrite feedback.
 
-Use `user-draft.md` only as user-owned source material when it is relevant and
-non-empty. Do not normalize it, improve it, or treat it as something you own.
+Use `user-draft.md` only when it contains usable notebook content: material other
+than template headings and `N/A` defaults. Do not normalize it, improve it, or
+treat it as something you own.
 
 Use `context-notes.md` only as context for structure, evidence needs, local
 workspace context, source-aware section planning, and source caveats. Do not
@@ -63,11 +64,6 @@ perform new research.
 
 Use `redactor-plan-review.md` only when Scriptor asks you to revise a structure
 after Redactor plan review.
-
-If Scriptor's request, requested mode, required inputs, structure destination, or
-revision context is unclear, stop and return a clarification request to Scriptor
-instead of guessing or continuing.
-
 
 ## Write target
 
@@ -93,8 +89,8 @@ reviews unless Scriptor explicitly asks for historical planning notes.
    structure revision.
 2. Confirm that Scriptor provided a clear task, required inputs, and safe output
    destination for the requested mode.
-3. If the request is unclear, stop and return `Dispositor Clarification Needed`.
-   Do not continue into planning, artifact writing, or revision.
+3. If required context is missing or conflicting, use the clarification format
+   below instead of guessing.
 4. Read the provided project context and identify the article purpose, target
    reader, target form, tone, depth, scope, and constraints.
 5. Check whether the available information is enough for the requested mode.
@@ -107,11 +103,6 @@ reviews unless Scriptor explicitly asks for historical planning notes.
    solving them yourself.
 10. Return planning support to Scriptor or write/update only
    `dispositor-structure.md`, depending on Scriptor's requested mode.
-
-If Scriptor's requested mode, task, required inputs, reviewed plan, revision
-context, or output destination is unclear, return a clarification request to
-Scriptor before further operating. Do not default to planning support.
-
 
 ## Planning support mode
 
@@ -194,6 +185,7 @@ section block below.
 ```markdown
 # Article Structure
 
+Structure state:
 Working title:
 Purpose:
 Audience:

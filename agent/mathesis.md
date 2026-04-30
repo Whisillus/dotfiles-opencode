@@ -15,7 +15,6 @@ tools:
   task: true
 permission:
   bash:
-    "*": "ask"
     "ls *": "allow"
     "pwd": "allow"
     "find *": "allow"
@@ -29,6 +28,7 @@ permission:
     "git status*": "allow"
     "git log*": "allow"
     "git show *": "allow"
+    "*": "ask"
   webfetch: "allow"
   websearch: "allow"
 ---
@@ -178,4 +178,3 @@ When editing mathematical writing:
 - preserve explicit local conventions second
 - improve notation, explanation, and Hugo compatibility third
 - prefer small, auditable fixes over broad rewrites unless the user asks for a rewrite
-

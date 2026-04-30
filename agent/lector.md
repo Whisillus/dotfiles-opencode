@@ -44,7 +44,7 @@ inputs are:
 - the current `logographos-draft-vNN.md`
 - `brief.md`
 - `collaboration-log.md`
-- `user-draft.md` if non-empty
+- `user-draft.md` if it contains usable notebook content
 - `context-notes.md` when Scriptor says local or source context affects reader
   expectations
 - `dispositor-structure.md` when needed
@@ -52,15 +52,16 @@ inputs are:
 
 Use `brief.md` and `collaboration-log.md` to infer the intended audience,
 purpose, tone, and scope. Use `dispositor-structure.md` only to understand what
-the draft is trying to achieve structurally. Use `user-draft.md` only as
-user-owned reference material when it is relevant and non-empty.
+the draft is trying to achieve structurally. Use `user-draft.md` only when it
+contains usable notebook content, meaning material other than template headings
+and `N/A` defaults, and helps set reader expectations.
 
 Use `context-notes.md` only when Scriptor provides it as relevant reader context.
 Do not use it to verify facts or sources.
 
-Do not read `logographos-draft-note.md`. It contains Logographos's own drafting
-notes and can bias reader-experience review. If Scriptor provides it, stop and ask
-Scriptor to resend the review request without that artifact.
+Do not read or rely on `logographos-draft-note.md`. If Scriptor provides it by
+mistake, ignore it, state that it was ignored, and proceed if required review
+inputs are otherwise clear.
 
 If the current draft, reviewed draft version, or review output path is missing or
 unclear, stop and report the missing input to Scriptor. Do not guess which draft
@@ -78,9 +79,8 @@ Prefer the review path provided by Scriptor. If Scriptor does not provide a
 review path, and the draft path is clearly inside `.scriptor/<project-slug>/`,
 write `lector-review.md` in that same project directory.
 
-If the review path cannot be identified safely, do not write any file. Return the
-review content to Scriptor and explain that the `lector-review.md` path is
-missing.
+If the review path cannot be identified safely, do not write or review. Return a
+missing-path clarification to Scriptor.
 
 When updating an existing `lector-review.md`, replace the current review content
 for the latest reviewed draft. Do not append a second stale review unless
@@ -207,8 +207,8 @@ help, describe the reader need instead of writing the replacement.
 ## Guardrails
 
 - Only write or update the project `lector-review.md`.
-- If the `lector-review.md` path is not clear, return review content instead of
-  writing to another file.
+- If the `lector-review.md` path is not clear, return a missing-path
+  clarification instead of review content.
 - Do not modify drafts.
 - Do not modify `user-draft.md`.
 - Do not modify the target article file.
