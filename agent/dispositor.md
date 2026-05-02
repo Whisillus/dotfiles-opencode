@@ -1,6 +1,8 @@
 ---
 description: Article Structure Planning Agent
 mode: subagent
+# Model selection: GPT-5.5 is pinned for reliable structure planning under Scriptor constraints.
+# Low temperature keeps outlines stable; high reasoning is enough for planning without final audit.
 model: openai/gpt-5.5
 temperature: 0.2
 reasoningEffort: high

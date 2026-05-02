@@ -1,6 +1,8 @@
 ---
 description: Editorial Review Agent
 mode: subagent
+# Model selection: GPT-5.5 is pinned for conservative editorial review and promotion gates.
+# Low temperature avoids speculative edits; xhigh reasoning supports consistency and notation audits.
 model: openai/gpt-5.5
 temperature: 0.2
 reasoningEffort: xhigh

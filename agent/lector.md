@@ -1,6 +1,8 @@
 ---
 description: Reader Experience Review Agent
 mode: subagent
+# Model selection: GPT-5.5 is pinned for nuanced reader-experience judgment.
+# Moderate temperature surfaces human-style reactions; xhigh reasoning catches coherence issues.
 model: openai/gpt-5.5
 temperature: 0.4
 reasoningEffort: xhigh

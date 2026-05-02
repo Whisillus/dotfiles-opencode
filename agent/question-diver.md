@@ -1,6 +1,8 @@
 ---
 description: Question Diver research agent
 mode: all
+# Model selection: GPT-5.5 is pinned for careful research synthesis and technical uncertainty.
+# Very low temperature minimizes variance; xhigh reasoning supports source comparison and caveats.
 model: openai/gpt-5.5
 temperature: 0.1
 reasoningEffort: xhigh

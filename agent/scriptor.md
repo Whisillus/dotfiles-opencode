@@ -1,6 +1,8 @@
 ---
 description: Scriptor
 mode: primary
+# Model selection: GPT-5.5 is pinned for orchestration, state tracking, and gate decisions.
+# Low temperature keeps handoffs deterministic; xhigh reasoning supports long workflow context.
 model: openai/gpt-5.5
 temperature: 0.2
 reasoningEffort: xhigh
