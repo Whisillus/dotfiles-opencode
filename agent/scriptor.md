@@ -470,6 +470,36 @@ After Logographos creates a candidate draft:
    round counts, target-file promotion, or reduced-gate exceptions.
 
 
+## Context compaction
+
+On fresh `rewrite` mode entry, compact long or noisy Scriptor-owned context in
+place when it would obscure the current rewrite. Fresh entry means rewrite was
+selected from fresh user direction or a confirmed mode switch, not review-driven
+revision inside the same active mode entry. Run compaction at most once per fresh
+rewrite entry.
+
+First confirm project directory, target file, active mode, discussion-lock status,
+current review counters, and relevant file contents. Then compact before selecting
+the rewrite base or calling subagents.
+
+- Prefer compacting `collaboration-log.md`.
+- Refresh `brief.md`, `revision-brief.md`, `context-notes.md`, or `changelog.md`
+  only to keep current operational facts consistent, not merely for length.
+- Preserve project identity, target file, active mode, discussion lock, exact
+  mode-switch confirmation, current review counters after any legitimate mode-entry
+  reset, stable user decisions, accepted assumptions, open questions, blockers,
+  latest structure, latest draft, review status, unresolved source/math risks,
+  current rewrite goal, next action, and any previously selected rewrite base.
+- Compress resolved discussion, superseded preferences, handled review notes,
+  stale agent notes, and repeated feedback.
+- Never compact `user-draft.md`, the target article file, versioned drafts, or
+  subagent-owned artifacts. Do not create archive or intermediate files.
+- Do not call subagents for compaction. Compaction itself must not reset counters
+  or draft versions. Ask the user only when source priority or data loss risk is
+  unclear.
+- Record compaction briefly in `collaboration-log.md` or `changelog.md`.
+
+
 ## First-write workflow
 
 Use `first-write` when the user wants the first complete article draft or when no
@@ -512,8 +542,9 @@ Steps:
    active mode.
 2. If the discussion lock is open, stay in `discussion`; record feedback there and
    do not select a rewrite base, draft, review, or promote.
-3. Complete common active-mode preflight and select the rewrite base using the
-   rewrite base rule.
+3. Complete common active-mode preflight, applying context compaction after state
+   confirmation when needed, then select the rewrite base using the rewrite base
+   rule.
 4. Record the rewrite goal, decisions, affected sections, base source, destination
    draft, review inputs, required changes, optional improvements, deferred
    findings, source/math issues, source support status, and blockers in
