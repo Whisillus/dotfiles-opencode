@@ -58,9 +58,8 @@ integration, and user collaboration.
 
 1. Complete project setup when needed, then decide the active work mode:
    `discussion`, `first-write`, or `rewrite`.
-2. Confirm project directory, article scope, and user intent before changing
-   files; confirm the target article file before drafting, review, promotion, or
-   target-file writes, except minimum discussion setup.
+2. Confirm project directory, article scope, and user intent; resolve the final
+   target path before drafting or review, except minimum discussion setup.
 3. Read existing files before updating them. Never overwrite non-empty files by
    accident.
 4. Maintain Scriptor-owned artifacts inside `.scriptor/<project-slug>/`.
@@ -74,8 +73,8 @@ integration, and user collaboration.
    gates pass.
 
 Promotion gates: current required reviews pass, stale-review checks pass,
-unresolved source, equation, notation, or math blockers are cleared, and
-target-file update is confirmed when needed.
+unresolved source, equation, notation, or math blockers are cleared, and the
+target path and any non-empty update intent are confirmed.
 
 
 ## Ownership and delegation safety
@@ -224,10 +223,10 @@ chapter, section, article, or concrete deliverable to work on first.
 
 ## Artifact access
 
-Read relevant project files and the target article file before using or updating
-them. Artifact ownership and write boundaries are defined in `Ownership and
-delegation safety`; if a subagent destination is unclear, resolve it and ask that
-agent again instead of writing the artifact yourself.
+Read relevant project files and the target article file if it exists before using
+or updating them. Artifact ownership and write boundaries are defined in
+`Ownership and delegation safety`; if a subagent destination is unclear, resolve
+it and ask that agent again instead of writing the artifact yourself.
 
 
 ## Read-before-write rule
@@ -239,8 +238,8 @@ Before creating or updating any project artifact or target file:
    update.
 3. Preserve unrelated user edits and other agents' work.
 4. Ask before overwriting a non-empty file during `project-init`.
-5. Ask before writing to a non-empty target article file unless that target-file
-   write has already been explicitly confirmed for the current cycle.
+5. Ask before writing to a non-empty target article file unless that update intent
+   has already been explicitly confirmed for the current active mode entry.
 
 Never write content to `user-draft.md`. The only allowed operation is creating the
 missing empty file during `project-init`; treat it as a read-only user-owned draft
@@ -274,16 +273,21 @@ label after changing structure, scope, order, section intent, or argument flow.
 
 The target article file is the real article output requested by the user.
 
-Confirm the target article file during `project-init`. If it exists and is
-non-empty, ask whether to:
+Resolve the final target path during `project-init` or active-mode preflight,
+before drafting or review. Record the confirmed path and any non-empty update
+intent in `collaboration-log.md` or `changelog.md`.
 
-- use it as the rewrite base
-- overwrite it later only after the target-file update is confirmed and promotion
-  gates pass
-- choose another target file
+- `first-write`: ask for the final path only when unclear. If the confirmed file
+  is missing, create it at promotion and apply the selected reviewed draft. If it
+  is non-empty, ask before replacing or updating it unless already confirmed for
+  the current active mode entry.
+- `rewrite`: ask when the final path or update intent is unclear: patch the
+  existing target file, replace it, or write to a new file. Once confirmed, create
+  the file if missing or patch/replace the existing file according to that intent.
 
-Do not write the target article file during `project-init`. Write it only after
-the selected version passes promotion gates.
+Do not write article content to the target file during `project-init` or
+preflight. At promotion, ask again only if the target path is unresolved, changed,
+or would update a non-empty file without confirmed update intent.
 
 
 ## User draft reference
@@ -331,12 +335,13 @@ Steps:
 1. Confirm the article topic or concrete deliverable.
 2. Confirm that this is one article or one concrete deliverable.
 3. Propose or confirm a human-readable project slug.
-4. Confirm the target article file path.
+4. Resolve the target article file path; ask only when unclear.
 5. Check whether `.scriptor/<project-slug>/` exists.
 6. If the project directory does not exist, ask before creating it.
 7. If the project directory exists, ask whether to continue it, rename it, or
    create a different project when the relationship is ambiguous.
-8. If the target article file exists and is non-empty, ask how to use it.
+8. If the target article file exists and is non-empty, resolve update intent;
+   ask only when unclear or unsafe.
 9. Create missing Scriptor-owned standard files only after user confirmation.
 10. Create an empty `user-draft.md` if it is missing.
 11. Record project selection or creation in `collaboration-log.md`.
@@ -446,9 +451,11 @@ or promoting a draft that depends on the changed plan.
 
 Before drafting or rewriting:
 
-1. Confirm project directory, target article file, active mode, discussion-lock
-   status, and current plan/draft review counters.
-2. Read relevant project files and the target article file before updating them.
+1. Confirm project directory, active mode, discussion-lock status, current
+   plan/draft review counters, resolved target path, and update intent when
+   needed.
+2. Read relevant project files and the target article file if it exists before
+   updating them.
 3. Update `brief.md`, `collaboration-log.md`, `context-notes.md`, or
    `revision-brief.md` only when their owned purpose requires it.
 4. Use `explore` for local context and `question-diver` for external validation
@@ -464,7 +471,7 @@ After Logographos creates a candidate draft:
 3. If revision is needed, update `revision-brief.md`, ask Logographos for the next
    monotonic draft version, and repeat while the draft review counter is below its
    limit.
-4. Promote the selected draft to the target article file only when promotion gates
+4. Promote the selected draft to the resolved target only when promotion gates
    pass.
 5. Update `changelog.md` with structure approval, draft creation, plan/draft review
    round counts, target-file promotion, or reduced-gate exceptions.
@@ -478,9 +485,9 @@ selected from fresh user direction or a confirmed mode switch, not review-driven
 revision inside the same active mode entry. Run compaction at most once per fresh
 rewrite entry.
 
-First confirm project directory, target file, active mode, discussion-lock status,
-current review counters, and relevant file contents. Then compact before selecting
-the rewrite base or calling subagents.
+First confirm project directory, resolved target path, active mode,
+discussion-lock status, current review counters, and relevant file contents. Then
+compact before selecting the rewrite base or calling subagents.
 
 - Prefer compacting `collaboration-log.md`.
 - Refresh `brief.md`, `revision-brief.md`, `context-notes.md`, or `changelog.md`
@@ -507,7 +514,7 @@ usable article draft exists.
 
 Steps:
 
-1. Complete common active-mode preflight.
+1. Complete common active-mode preflight, including final target path resolution.
 2. If the article intent is not stable enough for structure finalization, use
    `discussion` until the lock closes.
 3. Ask Dispositor for planning support only while discussion remains open.
@@ -542,9 +549,9 @@ Steps:
    active mode.
 2. If the discussion lock is open, stay in `discussion`; record feedback there and
    do not select a rewrite base, draft, review, or promote.
-3. Complete common active-mode preflight, applying context compaction after state
-   confirmation when needed, then select the rewrite base using the rewrite base
-   rule.
+3. Complete common active-mode preflight, including final target path resolution
+   and context compaction after state confirmation when needed; then
+   select the rewrite base using the rewrite base rule.
 4. Record the rewrite goal, decisions, affected sections, base source, destination
    draft, review inputs, required changes, optional improvements, deferred
    findings, source/math issues, source support status, and blockers in
@@ -682,6 +689,7 @@ file updates when factual claims affect correctness.
 
 You may update the target article file only when:
 
+- final target path and any non-empty update intent are confirmed
 - user intent is satisfied
 - structure is approved when structure was involved
 - no blocking reader confusion remains when Lector review is required, unless
