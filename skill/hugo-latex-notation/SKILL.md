@@ -17,26 +17,43 @@ Use this skill as the default notation standard for all mathematical writing in 
 
 # Equation mode and delimiters
 
-- Use the Hugo site's configured math delimiters.
-- Ensure the delimiters used in content match both the Goldmark passthrough configuration and the active math renderer configuration.
-- Do not assume that one delimiter style is universally enabled across Hugo sites.
-- For inline math, prefer `\(...\)` unless the local Hugo site explicitly uses another inline delimiter convention.
-- For display math, use the site's configured display delimiters, typically `\[...\]` or `$$...$$`.
-- Do not use `$...$` for inline math unless the local Hugo configuration and renderer explicitly support it.
-- If inline `$...$` is enabled, escape plain dollar signs outside math contexts as required by the site's Markdown and renderer configuration.
-- Prefer wrapping display environments inside the site's configured display delimiters unless the local setup explicitly and consistently supports bare `\begin{...}...\end{...}` display environments.
-- When using display environments such as `equation`, `align`, `aligned`, `cases`, or matrix environments, ensure the active renderer supports them.
-- Keep inline math short and grammatically integrated into the sentence.
-- Use display math for standalone equations, long expressions, derivations, matrices, and piecewise definitions.
+## Mode contract
+
+- The caller chooses inline or display; this skill enforces notation and
+  delimiters after that choice.
+- Article math must be delimiter-complete: inline `$...$`, display `$$...$$` on
+  its own lines.
+- Bare LaTeX math is invalid in article prose or headings, except literal code or
+  source text.
+- Do not use `\(...\)` or `\[...\]` unless the user or Scriptor sets a different
+  project delimiter policy.
+- Wrap display environments in `$$...$$`; never output bare
+  `\begin{...}...\end{...}` as article math.
+
+## Inline/display policy
+
+- Inline math must be short, simple, and grammatical, e.g. `$x$`,
+  `$\mathcal{L}$`, `$O(n)$`, or `$f_{\boldsymbol{\theta}}$`.
+- Use display math for standalone or complex expressions: chained relations,
+  derivations, fractions, sums, products, integrals, limits, `\argmax`,
+  `\argmin`, matrices, cases, alignment, long/nested indices, or dense notation.
+- Headings may contain only short, simple inline math. Move display math and
+  complex formulas into body prose with `$$...$$`.
+- Escape or rewrite plain dollar signs outside math when Markdown/rendering
+  requires it.
+- Use only display environments confirmed by the active renderer.
 
 ## Audit checks
 
-- Flag math delimiters that do not match the local Hugo passthrough or renderer configuration.
-- Flag use of `$...$` for inline math when inline dollar delimiters are not explicitly enabled.
+- Flag missing `$...$` or `$$...$$` delimiters around article math.
+- Flag bare LaTeX math outside literal code/source text.
+- Flag `\(...\)`, `\[...\]`, or bare display environments under the default
+  `$...$` / `$$...$$` policy.
 - Flag display environments whose renderer support is not confirmed locally.
 - Flag long or dense inline expressions that should be rewritten as display math.
 - Flag trivial display equations that should be inline instead.
-- Flag display equations that are not integrated into the surrounding prose.
+- Flag display math or complex formulas in Markdown headings.
+- Flag displayed equations that are not integrated into the surrounding prose.
 
 # Equation writing
 
@@ -580,4 +597,3 @@ Use the following symbols by default unless a topic strongly requires something 
 - Flag probability-vector notation and probability-function notation that are used together without an explicit distinction.
 - Flag likelihood notation that conflicts with the established use of `\mathcal{L}` for loss or objective notation.
 - Flag empirical and population quantities that are not clearly distinguished when both are present.
-
