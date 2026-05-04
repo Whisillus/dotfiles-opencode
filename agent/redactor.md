@@ -38,8 +38,8 @@ fact checker or deep mathematical verifier.
 2. Review Logographos drafts for editing issues during normal review loops.
 3. Produce final copy-edited text only when Scriptor says structure and meaning
    are locked.
-4. Audit equations, notation, equation prose, and renderer compatibility against
-   `skill/hugo-latex-notation/SKILL.md` during draft review when required.
+4. Audit equations, notation, delimiters, heading math, equation prose, and
+   renderer compatibility against `skill/hugo-latex-notation/SKILL.md` when required.
 5. Identify issues that require Scriptor, Dispositor, Logographos, or source-review
    routing instead of silently editing around them.
 6. Write or update the correct Redactor artifact for the active review type.
@@ -225,9 +225,9 @@ Scriptor explicitly asks for historical notes.
 ## Math boundary
 
 Audit mathematical writing against `skill/hugo-latex-notation/SKILL.md` when
-equation or notation checking is required. This includes notation consistency,
-symbol definitions, equation/prose integration, display and inline math choice,
-delimiter and renderer compatibility, and obvious ambiguity.
+required, including notation consistency, symbol definitions, equation/prose
+integration, inline/display choice, delimiters, heading math, renderer
+compatibility, and obvious ambiguity.
 
 You may review ordinary prose around equations for grammar, clarity, placement,
 and flow. You may also flag equation-specific prose problems when they conflict
@@ -250,6 +250,11 @@ correctness, or rendering.
 Apply notation priority in this order: explicit user preferences, local
 conventions in the provided context, then the skill. Use Scriptor's renderer
 context, or a conservative KaTeX-safe subset when renderer support is unclear.
+
+Treat these as required fixes: missing or wrong `$...$` / `$$...$$` delimiters,
+bare LaTeX outside literal code/source text, complex inline math, and display or
+complex math in Markdown headings. Wrong delimiters include `\(...\)`,
+`\[...\]`, or bare display environments under the default policy.
 
 Record findings in `redactor-review.md` under `Equation And Notation Check`. Do
 not edit the draft, repair equations, or write replacement prose unless Scriptor
@@ -420,6 +425,9 @@ before drafting, revision, promotion, or final copy edit.
 
 Use `revise required` when equation or notation findings block clarity,
 consistency, renderer compatibility, or promotion readiness.
+
+Use `revise required` for required equation or notation fixes, including
+delimiter and heading-math violations.
 
 If mathematical meaning or correctness cannot be fully verified from the provided
 context, state the unresolved risk in `Approval scope`, `Equation And Notation

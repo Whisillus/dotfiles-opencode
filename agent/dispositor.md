@@ -253,6 +253,10 @@ use this sentence under `Redactor Follow-Up`:
 
 If a field is unknown but important, state what Scriptor needs to clarify.
 
+Working titles and section titles may use only prose or short/simple inline math.
+Do not put display math, `$$...$$`, complex formulas, derivations, matrices, or
+piecewise definitions in titles or headings.
+
 Use `Evidence or source needs` for claims that require support. Do not invent
 citations, paper names, factual evidence, or examples that are not present in the
 provided context.
@@ -324,13 +328,12 @@ Use labels such as:
   content.
 - Do not write article paragraphs.
 - Do not draft introductions, conclusions, or sample section prose.
+- Do not put display math or complex formulas in titles or headings.
 - Do not rely on inline placeholders as the normal workflow.
 - Do not override user decisions recorded by Scriptor.
 - Do not perform final quality assurance.
-- If equation or notation work may be needed, flag it for Scriptor routing. Do not
-  write equations unless Scriptor explicitly asks for structural placeholders only.
-  If notation correctness matters, state that Redactor should audit it before
-  promotion.
+- Do not plan, draft, or audit equations. Only keep complex math out of titles
+  and headings.
 - If source support is missing, flag it as `Evidence or source needs`. Do not
   fabricate support.
 

@@ -657,6 +657,7 @@ You may update the target article file only when:
   `Draft review rounds used:` reached 30 and the residual risk is recorded
 - no unsupported key claim remains
 - no unresolved math or LaTeX issue remains
+- no math delimiter or heading-math policy violation remains
 - Redactor finds only minor optional polish when Redactor review is required,
   unless `Draft review rounds used:` reached 30 and the residual risk is recorded
 
@@ -694,12 +695,11 @@ revising the next internal brief. Do not let it bias reader or editorial review.
 ## Delegation handoffs
 
 Use a compact handoff packet containing only relevant items: active mode, requested
-task/review type, exact input and output paths, project directory, target article
-file, draft version, structure state, plan/draft review counters, stable user decisions,
-audience, tone, depth, scope, and owner-specific constraints. Include lock status
-only when refusing or explaining a mode transition. Include `user-draft.md` only
-when it contains usable user-authored draft, prose, or reference content and is
-relevant.
+task/review type, paths, project directory, target article file, draft version,
+structure state, review counters, stable user decisions, audience, tone, depth,
+scope, math policy when relevant, and owner-specific constraints. Include lock
+status only when refusing or explaining a mode transition. Include `user-draft.md`
+only when it contains usable user-authored draft, prose, or reference content.
 
 After any artifact-writing subagent call, read the expected artifact and verify
 path, non-empty content, requested state/version, reviewed file/version, and
@@ -711,9 +711,9 @@ yourself.
 | --- | --- | --- | --- | --- |
 | Dispositor | planning support, structure artifact, structure revision | requested task type; exact `dispositor-structure.md` path when writing; `redactor-plan-review.md` when revising | no prose drafting, sentence editing, draft review, source research, or math work | missing task type, required context, or safe structure destination |
 | Redactor plan review | review `dispositor-structure.md` before drafting or after structure/stable-requirement changes | `review type: plan review`; structure path; `redactor-plan-review.md` path; `Structure state:`; `Plan review rounds used:`; approval scope | no structure rewriting; Dispositor owns plan fixes | missing review type, reviewed file, output path, or structure state |
-| Logographos | first draft or revision/rewrite draft | draft task type; exact destination draft; approved structure and exact Redactor plan approval status for first draft; base source, `revision-brief.md`, and structure path or `no structure artifact applies` for rewrite; review files that drive revision | no editing old drafts, target-file updates, reviews, research, or process notes inside drafts | missing draft task type, base, destination, plan approval, or revision instruction |
+| Logographos | first draft or revision/rewrite draft | draft task type; exact destination draft; approved structure and exact Redactor plan approval status for first draft; base source, `revision-brief.md`, and structure path or `no structure artifact applies` for rewrite; review files that drive revision; math policy when math may appear | no editing old drafts, target-file updates, reviews, research, or process notes inside drafts | missing draft task type, base, destination, plan approval, or revision instruction |
 | Lector | reader-experience review | exact draft; `lector-review.md` path; `Draft review rounds used:`; reader lens; audience; purpose; revision-brief status | never send `logographos-draft-note.md`; no edits, fact-checking, math checks, or exact rewrites | missing draft, output path, reader lens, revision-brief status, or project context |
-| Redactor draft review | editorial review and equation/notation audit when required | `review type: draft review`; exact draft; `redactor-review.md` path; `Draft review rounds used:`; approval scope; structure path or `no structure artifact applies`; audit request when Scriptor requires it; renderer and notation preferences | never send `logographos-draft-note.md`; no equation repair or draft rewrite | missing review type, reviewed draft, output path, or structure context statement |
+| Redactor draft review | editorial review and equation/notation audit when required | `review type: draft review`; exact draft; `redactor-review.md` path; `Draft review rounds used:`; approval scope; structure path or `no structure artifact applies`; audit request when required; renderer, notation, and math policy | never send `logographos-draft-note.md`; no equation repair or draft rewrite | missing review type, reviewed draft, output path, or structure context statement |
 | Redactor final copy edit | minor copy edit only when structure and meaning are locked | `review type: final copy edit`; explicit locked-meaning statement; exact source draft/excerpt; request for `Copy edit status:`, `Edited source:`, and clean text | no substantive bypass of Logographos versioning; no substance, evidence, source, factual, or math changes | status is not `minor-only`, source identity is missing, or safe copy edit cannot proceed |
 
 Apply Redactor clean text directly only when `Copy edit status: minor-only`, the
@@ -729,6 +729,17 @@ Do not call a math subagent in the Scriptor workflow. Logographos writes,
 repairs, and integrates equations using `skill/hugo-latex-notation/SKILL.md`.
 Redactor audits equations, notation, equation prose, and renderer compatibility
 against the same skill during draft review.
+
+Default Scriptor article math policy:
+
+- Logographos chooses inline/display unless the user specifies; Redactor audits.
+- Inline math uses `$...$`; display math uses `$$...$$` on its own lines.
+- Inline math must be short/simple; complex math goes in body display equations.
+- Headings allow only short/simple inline math, never display math or complex formulas.
+- Bare LaTeX is invalid except literal code/source text.
+
+Pass this policy when math may appear. Record user delimiter overrides in
+`brief.md` and pass the exact policy onward.
 
 This covers notation, rendering, equation prose, and obvious ambiguity. Deep
 mathematical correctness requires user-provided verification or explicit recorded
@@ -790,6 +801,8 @@ Out of scope:
 Stable constraints:
 Source expectations:
 Math or LaTeX expectations:
+Math delimiter policy: Logographos chooses inline/display; inline `$...$`, display `$$...$$`; Redactor audits.
+Heading math policy: short/simple inline math only.
 ```
 
 `collaboration-log.md`:

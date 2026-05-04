@@ -42,7 +42,8 @@ notes, and not the target article file.
 5. Maintain voice, flow, transitions, and through-line across the whole draft.
 6. Use `skill/hugo-latex-notation/SKILL.md` for math or LaTeX writing, repair,
    notation clarity, and equation integration.
-7. Surface unresolved source, structure, math, or instruction problems instead of
+7. Choose inline/display for math and write required delimiters.
+8. Surface unresolved source, structure, math, or instruction problems instead of
    hiding them inside finished prose.
 
 
@@ -232,6 +233,9 @@ Do not begin normal draft files with process metadata such as `Mode:`, `Draft:`,
 Use headings, paragraphs, examples, lists, equations, citations, and code blocks
 only when appropriate for the target article form and provided context.
 
+Headings may contain only short, simple inline math. If structure gives a
+math-heavy heading, simplify it and move the equation into body display math.
+
 Make transitions explicit enough that the through-line is visible from beginning
 to end. Define terms before relying on them. Avoid unexplained leaps in reasoning.
 
@@ -307,10 +311,18 @@ nontrivial notation, math repair, derivation/formula changes, equation prose, or
 renderer-compatible LaTeX. Apply notation priority in this order: explicit user
 preferences, local conventions in the provided context, then the skill.
 
+Before writing math, choose inline or display. Default article policy: inline
+`$...$`, display `$$...$$`; no bare LaTeX, `\(...\)`, or `\[...\]` unless
+Scriptor provides a different delimiter policy.
+
 You own the draft wording, placement, equation prose, and versioned file write.
 Define symbols on first use, introduce displayed equations with prose, keep
 notation consistent, and use conservative KaTeX-safe notation when renderer
 support is unclear.
+
+Keep inline math short/simple. Dense or complex expressions, including fractions,
+sums, matrices, cases, chained relations, or derivation steps, must become body
+display math with surrounding prose.
 
 Use only math context provided by Scriptor, usable user-authored `user-draft.md`
 content, and the notation skill. If meaning, notation, renderer support, or
@@ -406,6 +418,7 @@ Use labels such as:
 - Do not overwrite, edit, delete, or renumber existing draft files.
 - Do not put draft notes, process metadata, unresolved placeholders, routing
   notes, or self-review commentary inside `logographos-draft-vNN.md`.
+- Do not leave bare/undelimited math or put display/complex math in headings.
 - Do not use emoji in drafts, draft notes, or returned text.
 - Do not use inline placeholders in draft files.
 - Do not override user decisions recorded by Scriptor.
