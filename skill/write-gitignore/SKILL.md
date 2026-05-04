@@ -67,7 +67,7 @@ Do not blindly ignore lockfiles. Lockfiles such as `package-lock.json`, `yarn.lo
 ### Project-Specific Patterns
 
 - Check for framework-specific generated outputs, such as `.next/`, `.nuxt/`, `nuxt-dist/`, `.svelte-kit/`, `.astro/`, or similar directories that appear as untracked generated artifacts.
-- Look for large binary files, archives, local database files, or generated assets that should not be versioned.
+- Look for large binary files, archives, local database files, generated assets, or local tool state such as `.scriptor/` that should not be versioned.
 - Do not ignore project source, documentation, fixtures, migrations, checked-in assets, or configuration files unless the user or project evidence clearly indicates they are local-only.
 
 ## Pattern Format
