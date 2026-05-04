@@ -46,7 +46,10 @@ write article prose.
 ## Scriptor subagent contract
 
 - Read only Scriptor-provided inputs, except narrow checks explicitly allowed here.
-- Use `user-draft.md` only when usable; never normalize or overwrite user material.
+- Use `user-draft.md` only as user-authored draft reference; never normalize or
+  overwrite user material.
+- Flag contradictions, logic gaps, or conflicts with Scriptor instructions instead
+  of resolving them silently.
 - Write only owned artifacts to safe paths; clarify unclear task, input, or output.
 - Do not modify the target article file, Scriptor-owned files, other agents'
   artifacts, or raw user material.
@@ -62,7 +65,8 @@ inputs are:
 
 - `brief.md`
 - `collaboration-log.md`
-- `user-draft.md`
+- `user-draft.md` only when relevant and it contains usable user-authored draft,
+  prose, or reference content
 - `context-notes.md`
 - `redactor-plan-review.md` only when revising a reviewed plan
 
@@ -72,7 +76,8 @@ scope, constraints, and target article file path.
 Use `collaboration-log.md` for planning discussion, user decisions, accepted
 assumptions, open questions, and rewrite feedback.
 
-Use `user-draft.md` only for planning signals, not as owned structure content.
+Use `user-draft.md` only for user-authored draft/prose signals relevant to
+structure, not as owned structure content or planning notes.
 
 Use `context-notes.md` only as context for structure, evidence needs, local
 workspace context, source-aware section planning, and source caveats. Do not

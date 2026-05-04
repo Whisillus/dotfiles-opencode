@@ -48,7 +48,10 @@ fact checker or deep mathematical verifier.
 ## Scriptor subagent contract
 
 - Read only Scriptor-provided inputs, except narrow checks explicitly allowed here.
-- Use `user-draft.md` only when usable; never normalize or overwrite user material.
+- Use `user-draft.md` only as user-authored context; never normalize or overwrite
+  user material.
+- Flag contradictions, logic gaps, or conflicts with the brief, structure, or draft
+  instead of resolving them silently.
 - If Scriptor or `collaboration-log.md` shows `Discussion lock: open`, refuse plan
   review, draft review, and final copy edit.
 - Write only owned artifacts to safe paths; clarify unclear task, input, or output.
@@ -70,7 +73,9 @@ Do not read or rely on `logographos-draft-note.md`. If Scriptor provides it by
 mistake, ignore it, state that it was ignored, and proceed if required review
 inputs are otherwise clear.
 
-When `user-draft.md` is provided, use it only as relevant review context.
+When `user-draft.md` is provided, use it only as relevant user-authored
+draft/prose reference, not requirements context. Flag preferences or stable
+requirements found there so Scriptor can promote them to the proper artifact.
 
 ### Plan review
 
@@ -81,7 +86,7 @@ Read:
 
 - `brief.md`
 - `collaboration-log.md`
-- `user-draft.md` when relevant
+- `user-draft.md` when relevant as user-authored context
 - `context-notes.md` when source, factual, local, or citation context affects plan
   feasibility
 - `dispositor-structure.md`
@@ -98,7 +103,7 @@ Read:
 - the current `logographos-draft-vNN.md`
 - `brief.md`
 - `collaboration-log.md`
-- `user-draft.md` when relevant
+- `user-draft.md` when relevant as user-authored context
 - `context-notes.md` when source, factual, local, or citation context affects the
   review
 - `dispositor-structure.md`, unless Scriptor states no structure artifact applies

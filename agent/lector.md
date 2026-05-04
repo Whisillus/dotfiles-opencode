@@ -45,7 +45,10 @@ the fact checker, not the math reviewer, and not the prose rewriter.
 ## Scriptor subagent contract
 
 - Read only Scriptor-provided inputs, except narrow checks explicitly allowed here.
-- Use `user-draft.md` only when usable; never normalize or overwrite user material.
+- Use `user-draft.md` only as user-authored reader-expectation context; never
+  normalize or overwrite user material.
+- Flag contradictions, logic gaps, unclear transitions, or unclear user intent only
+  as reader-experience issues; do not fix or resolve them silently.
 - If Scriptor sends `Discussion lock: open`, refuse review work.
 - Write only owned artifacts to safe paths; clarify unclear task, input, or output.
 - Do not modify the target article file, Scriptor-owned files, other agents'
@@ -61,7 +64,7 @@ inputs are:
 - the current `logographos-draft-vNN.md`
 - `brief.md`
 - `collaboration-log.md`
-- `user-draft.md` when relevant to reader expectations
+- `user-draft.md` when relevant as user-authored reader-expectation context
 - `context-notes.md` when Scriptor says local or source context affects reader
   expectations
 - `dispositor-structure.md` when needed
@@ -70,7 +73,7 @@ inputs are:
 Use `brief.md` and `collaboration-log.md` to infer the intended audience,
 purpose, tone, and scope. Use `dispositor-structure.md` only to understand what
 the draft is trying to achieve structurally. Use `user-draft.md` only when it
-helps set reader expectations.
+contains user-authored draft/prose context that helps set reader expectations.
 
 Use `context-notes.md` only when Scriptor provides it as relevant reader context.
 Do not use it to verify facts or sources.

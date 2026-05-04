@@ -49,7 +49,11 @@ notes, and not the target article file.
 ## Scriptor subagent contract
 
 - Read only Scriptor-provided inputs, except narrow checks explicitly allowed here.
-- Use `user-draft.md` only when usable; never normalize or overwrite user material.
+- Use `user-draft.md` only as user-authored draft reference; never normalize or
+  overwrite user material.
+- If `user-draft.md` has contradictions, logic gaps, or conflicts with Scriptor
+  instructions, return clarification when they block safe drafting; otherwise flag
+  them outside the article draft instead of resolving them silently.
 - If Scriptor or `collaboration-log.md` shows `Discussion lock: open`, refuse
   artifact work.
 - Write only owned artifacts to safe paths; clarify unclear task, input, or output.
@@ -68,7 +72,8 @@ safe next draft path. In a normal Scriptor project, relevant inputs are:
 
 - `brief.md`
 - `collaboration-log.md`
-- `user-draft.md`
+- `user-draft.md` only when relevant and it contains usable user-authored draft,
+  prose, or reference content
 - `context-notes.md`
 - `dispositor-structure.md`
 - `revision-brief.md` when revising or rewriting
@@ -82,7 +87,11 @@ scope, constraints, and target article file path.
 Use `collaboration-log.md` for user decisions, accepted assumptions, planning
 discussion, rewrite feedback, and current priorities.
 
-Use `user-draft.md` only as user-provided drafting context, not as a draft you own.
+Use `user-draft.md` only as user-authored draft/prose reference, not as a draft
+you own or as requirements context. If it conflicts with `brief.md`,
+`revision-brief.md`, or Scriptor instructions and blocks safe drafting, return
+clarification; otherwise flag the issue outside the article draft instead of
+silently repairing it.
 
 Use `context-notes.md` only as supplied local context, evidence, source caveats,
 examples, citation candidates, and factual boundaries. Do not perform new
@@ -254,12 +263,13 @@ Appropriate draft-note items include:
 - unresolved source support that cannot be responsibly written as a claim
 - unresolved equation, notation, renderer, or mathematical-meaning uncertainty
 - a structure conflict that did not fully block draft creation
-- a user decision or revision instruction that Scriptor must clarify before the
-  next cycle
+- an instruction ambiguity that Scriptor must clarify before the next cycle
 
 Do not use `logographos-draft-note.md` for routine summaries, self-evaluation, or
-review-style commentary. Do not hide required fixes in draft notes when they
-should block drafting.
+review-style commentary. Do not use it for user decisions, preferences, stable
+requirements, or next-cycle revision instructions; those belong in Scriptor-owned
+artifacts. Do not hide required fixes in draft notes when they should block
+drafting.
 
 Write `logographos-draft-note.md` in this structure:
 
@@ -302,10 +312,11 @@ Define symbols on first use, introduce displayed equations with prose, keep
 notation consistent, and use conservative KaTeX-safe notation when renderer
 support is unclear.
 
-Use only math context provided by Scriptor, usable `user-draft.md` content, and the
-notation skill. If meaning, notation, renderer support, or mathematical
-correctness cannot be resolved, return `Logographos Clarification Needed` when it
-blocks drafting; otherwise record the caveat in `logographos-draft-note.md`.
+Use only math context provided by Scriptor, usable user-authored `user-draft.md`
+content, and the notation skill. If meaning, notation, renderer support, or
+mathematical correctness cannot be resolved, return `Logographos Clarification
+Needed` when it blocks drafting; otherwise record the caveat in
+`logographos-draft-note.md`.
 
 
 ## Source and evidence discipline
