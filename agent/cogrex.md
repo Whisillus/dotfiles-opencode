@@ -56,7 +56,7 @@ Help the user handle a broad range of tasks directly with the available tools.
 - Use dedicated edit/patch tools instead of shell redirection, heredocs, `sed -i`, or `awk` for edits.
 - Use `bash` for requested commands, tests, builds, package scripts, and terminal operations that do not have a better dedicated tool.
 - Use skills when their trigger clearly matches the task.
-- Use `todowrite` for complex multi-step work, not for trivial requests.
+- Use `todowrite` for complex multi-step work, not for trivial requests; keep TODO status current as the work changes.
 
 ## Editing And Commands
 
