@@ -27,7 +27,7 @@ permission:
     "lector": allow
     "redactor": allow
     "explore": allow
-    "question-diver": allow
+    "inquisitor": allow
   bash:
     "*": "ask"
     "ls *": "allow"
@@ -65,7 +65,7 @@ integration, and user collaboration.
 4. Maintain Scriptor-owned artifacts inside `.scriptor/<project-slug>/`.
 5. Delegate planning to Dispositor, drafting to Logographos, reader review to
    Lector, and editorial review to Redactor.
-6. Use `explore` and `question-diver` only as optional helpers, not as mandatory
+6. Use `explore` and `inquisitor` only as optional helpers, not as mandatory
    writing-loop agents.
 7. Enforce review freshness, draft versioning, source discipline, equation and
    notation routing, and target-file promotion gates.
@@ -458,7 +458,7 @@ Before drafting or rewriting:
    updating them.
 3. Update `brief.md`, `collaboration-log.md`, `context-notes.md`, or
    `revision-brief.md` only when their owned purpose requires it.
-4. Use `explore` for local context and `question-diver` for external validation
+4. Use `explore` for local context and `inquisitor` for external validation
    only when needed; record useful helper output in `context-notes.md`.
 5. If intent becomes unstable or article-shaping feedback changes purpose,
    audience, framing, scope, or preference, switch to `discussion` and apply the
@@ -596,7 +596,7 @@ apply the strictest route and promotion blocker.
 | Content or detail | `collaboration-log.md`, `revision-brief.md`, and `context-notes.md` only for changed source/example/citation/caveat context | usually Logographos; Dispositor if section jobs or order are pressured | Redactor draft review; add Lector when understanding, flow, or engagement changes | unsupported new key claims |
 | Style or tone | `collaboration-log.md`, `revision-brief.md`, and `brief.md` only for stable whole-article changes | Logographos drafts; Redactor reviews tone and consistency | Redactor draft review; add Lector when reader experience changes | meaning drift or blocking consistency issue |
 | Sentence polish | `collaboration-log.md` and `revision-brief.md` | normal rewrite through Logographos, or Redactor final copy edit only when structure and meaning are locked | Redactor review; Lector only if reading experience changes | direct target-file copy edit unless it is minor-only, based on an already reviewed versioned draft, user-approved, and recorded in `changelog.md` |
-| Factual or source | `collaboration-log.md`, `context-notes.md`, and `revision-brief.md` | `question-diver` only if needed; Logographos drafts from supported context; Redactor flags unresolved source scope | Redactor draft review; add Lector if explanation flow or cognitive load changes | unsupported key claims or unresolved source caveats affecting correctness |
+| Factual or source | `collaboration-log.md`, `context-notes.md`, and `revision-brief.md` | `inquisitor` only if needed; Logographos drafts from supported context; Redactor flags unresolved source scope | Redactor draft review; add Lector if explanation flow or cognitive load changes | unsupported key claims or unresolved source caveats affecting correctness |
 | Math or LaTeX | `collaboration-log.md` and `revision-brief.md` | Logographos writes/repairs equations using `skill/hugo-latex-notation/SKILL.md`; Redactor audits using the same skill | Redactor draft review with `Equation And Notation Check`; add Lector if comprehension, flow, or cognitive load changes | `Equation And Notation Check` is `revise required` or `unresolved` unless user accepts the recorded risk |
 
 
@@ -626,7 +626,7 @@ Logographos draft -> Lector review + Redactor review -> optional Logographos rev
 ```
 
 Equation and notation work by Logographos or Redactor does not count as a review
-round unless it triggers a full draft review. `explore` and `question-diver`
+round unless it triggers a full draft review. `explore` and `inquisitor`
 helper calls do not count as review rounds. User discussion by itself does not
 count as a review round.
 
@@ -797,7 +797,7 @@ stop until the blocker is resolved.
 Use `explore` when local workspace context is needed, such as finding notes,
 drafts, PDFs, markdown files, references, or style examples.
 
-Use `question-diver` only when external research is needed, such as finding
+Use `inquisitor` only when external research is needed, such as finding
 sources requested by the user, validating factual claims, checking current
 information, collecting examples, or resolving source-support gaps.
 
@@ -808,7 +808,7 @@ Helper outputs should be recorded in `context-notes.md` when useful. Helpers do
 not own the article structure, do not write article prose, and do not write the
 target article file.
 
-Use `question-diver` as a helper only when it is callable in the current OpenCode
+Use `inquisitor` as a helper only when it is callable in the current OpenCode
 setup. It may be configured as a primary agent rather than a subagent. Do not
 assume direct task delegation works. If it is not callable directly or a task call
 fails, use equivalent research with available web tools and record useful results

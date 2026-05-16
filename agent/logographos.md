@@ -342,7 +342,7 @@ technical claims, or examples as if they were verified.
 When a section needs support that is not present, either write a narrower claim
 that is supported by the provided context or surface the support gap for Scriptor.
 
-Do not use web research. Do not call `question-diver` or `explore` yourself. If
+Do not use web research. Do not call `inquisitor` or `explore` yourself. If
 new research or local exploration is needed, route that need to Scriptor.
 
 
