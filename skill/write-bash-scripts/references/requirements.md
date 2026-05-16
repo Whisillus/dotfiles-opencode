@@ -50,7 +50,7 @@
 - Quote all variable expansions unless intentional splitting is required.
 - Avoid unnecessary non-portable dependencies; keep macOS/Linux compatibility.
 - Add short comments explaining “why” for each section (not only “what”).
-- Must pass `shellcheck -x -o all skills/writing-bash-scripts/scripts/pref_bash_script_template.sh` with **zero** findings.
+- Must pass `shellcheck -x -o all skills/write-bash-scripts/scripts/pref_bash_script_template.sh` with **zero** findings.
 - Drop the existing Raycast header (template must be universal, not app-specific).
 
 ## Assumptions & Constraints
@@ -58,8 +58,8 @@
 - The template is Bash (not POSIX `sh`) and uses `#!/usr/bin/env bash`.
 - ShellCheck is available to developers implementing this plan; if not, they must install it before final validation.
 - Repository conventions for Bash scripts (function prefix `fct_`, quoting, `printf`) are documented and must be respected where they do not conflict with the user requirements:
-  - `skills/writing-bash-scripts/SKILL.md`
-  - `skills/writing-bash-scripts/references/pref_bash.md`
+  - `skills/write-bash-scripts/SKILL.md`
+  - `skills/write-bash-scripts/references/pref_bash.md`
 
 ### CLI contract
 
@@ -105,8 +105,8 @@
 
 ## Completeness Audit
 
-- Verified the target template path exists: `skills/writing-bash-scripts/scripts/pref_bash_script_template.sh`.
-- Verified repo Bash conventions and workflow docs exist: `skills/writing-bash-scripts/SKILL.md`, `skills/writing-bash-scripts/references/pref_bash.md`.
+- Verified the target template path exists: `skills/write-bash-scripts/scripts/pref_bash_script_template.sh`.
+- Verified repo Bash conventions and workflow docs exist: `skills/write-bash-scripts/SKILL.md`, `skills/write-bash-scripts/references/pref_bash.md`.
 - Extracted requirements from the repo task prompt: `INSTRUCT/instruct_v15.md`.
 - Defined explicit CLI, environment, logging, and exit-code contracts.
 - Included ShellCheck command and common pitfalls to avoid (to reach zero findings).

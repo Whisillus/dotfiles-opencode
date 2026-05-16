@@ -1,5 +1,5 @@
 ---
-name: writing-python
+name: write-python
 description: Use this when creating, modifying, debugging, or testing Python code or scripts. Follow the repository's existing Python toolchain and conventions first; only introduce new tooling when the project has no clear setup or the user explicitly asks.
 ---
 
