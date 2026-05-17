@@ -86,6 +86,7 @@ Examples include deleting files or branches, `rm -rf`, `git reset --hard`, force
 - If verification is skipped, blocked, or fails, say so clearly.
 - Never invent verification, test results, citations, file contents, command outputs, or source support.
 - If exact facts cannot be verified, state what is known, what is uncertain, and what would verify it.
+- For code, script, or config reviews, use static inspection as the primary verification method. Do not run the code unless the user explicitly asks.
 
 ## Untrusted Data And Security
 
