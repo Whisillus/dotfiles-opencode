@@ -4,7 +4,7 @@
   "share": "disabled",
 
   // "model": "zhipuai-coding-plan/glm-5",
-  "default_agent": "question-diver",
+  "default_agent": "cogrex",
 
   "server": {
     "port": 6868,
@@ -16,6 +16,15 @@
         "~/.config/opencode/skill/*": "allow",
         "/tmp/*": "allow",
     },
+  },
+
+  "agent": {
+    "plan": {
+      "disable": true
+    },
+    "build": {
+      "disable": true
+    }
   },
 
   "provider": {

@@ -6,8 +6,8 @@ The shipped scripts stay intentionally concise. This document is the fuller
 reference that explains the design choices, safety rules, and tradeoffs behind
 them. When in doubt, follow the current reference implementations:
 
-- `skills/writing-bash-scripts/scripts/pref_bash_script_template.sh`
-- `skills/writing-bash-scripts/scripts/run_shellck.sh`
+- `skills/write-bash-scripts/scripts/pref_bash_script_template.sh`
+- `skills/write-bash-scripts/scripts/run_shellck.sh`
 
 If external Bash advice conflicts with this document or those scripts, prefer
 this project's conventions.
@@ -29,8 +29,8 @@ These conventions optimize for five things:
 ## 2. How to use this reference
 
 - For new scripts, start from
-  `skills/writing-bash-scripts/scripts/pref_bash_script_template.sh`.
-- For linting, use `skills/writing-bash-scripts/scripts/run_shellck.sh`.
+  `skills/write-bash-scripts/scripts/pref_bash_script_template.sh`.
+- For linting, use `skills/write-bash-scripts/scripts/run_shellck.sh`.
 - Keep implementation files lean; put longer rationale in docs like this one.
 - Treat the template as the executable example and this document as the
   explanatory guide.
@@ -549,11 +549,11 @@ Use the wrapper:
 
 ```bash
 # Default: scan the wrapper's own scripts directory
-skills/writing-bash-scripts/scripts/run_shellck.sh
+skills/write-bash-scripts/scripts/run_shellck.sh
 
 # Specific files or directories
-skills/writing-bash-scripts/scripts/run_shellck.sh path/to/script.sh
-skills/writing-bash-scripts/scripts/run_shellck.sh skills/writing-bash-scripts/scripts other/dir/
+skills/write-bash-scripts/scripts/run_shellck.sh path/to/script.sh
+skills/write-bash-scripts/scripts/run_shellck.sh skills/write-bash-scripts/scripts other/dir/
 ```
 
 The wrapper intentionally does three useful things:

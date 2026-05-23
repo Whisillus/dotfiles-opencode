@@ -1,5 +1,5 @@
 ---
-name: writing-bash-scripts
+name: write-bash-scripts
 description: Create and refactor Bash scripts following conventions (strict mode, fct_ naming, quoting). Includes shellcheck linting. Use when creating shell scripts, refactoring existing scripts, debugging shell errors, or linting scripts.
 ---
 
@@ -30,11 +30,11 @@ Run shellcheck on scripts using the provided wrapper:
 
 ```bash
 # Lint all scripts in this skill's scripts/ directory (default)
-skills/writing-bash-scripts/scripts/run_shellck.sh
+skills/write-bash-scripts/scripts/run_shellck.sh
 
 # Lint specific files or directories
-skills/writing-bash-scripts/scripts/run_shellck.sh path/to/script.sh
-skills/writing-bash-scripts/scripts/run_shellck.sh skills/writing-bash-scripts/scripts other/dir/
+skills/write-bash-scripts/scripts/run_shellck.sh path/to/script.sh
+skills/write-bash-scripts/scripts/run_shellck.sh skills/write-bash-scripts/scripts other/dir/
 ```
 
 The linting script:
