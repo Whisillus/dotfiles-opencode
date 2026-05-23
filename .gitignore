@@ -3,6 +3,9 @@ node_modules/
 package.json
 bun.lock
 
+# Internal orchestration state
+.artamir/
+
 # Environment files
 .env
 .env.*
