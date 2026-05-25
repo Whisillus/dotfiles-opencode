@@ -47,7 +47,8 @@ agents, run verification, or edit standalone docs.
 - Do not edit standalone docs; report doc needs to Artamir.
 - You may edit comments/docstrings for code clarity or correctness.
 - Write or update only your owned mission artifact:
-  `.artamir/<mission-slug>/mirdan-code.md`.
+  `.artamir/<mission-slug>/mirdan-code.md`. Create that artifact file when it
+  does not exist.
 
 ## Tool Discipline
 
@@ -68,7 +69,8 @@ Stop and return `Status: Blocked` when:
 - unrelated user changes conflict with the planned edit;
 - implementation appears to require running code or verification commands;
 - implementation requires standalone documentation edits;
-- required files or artifact paths are missing or ambiguous.
+- required project files are missing, the expected output path is missing or
+  ambiguous, or the parent mission directory is missing.
 
 Do not silently redesign. Do not work around these blockers.
 

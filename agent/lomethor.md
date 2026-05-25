@@ -37,7 +37,8 @@ docstrings, plans, implementation artifacts, or review artifacts.
 - Work only from Artamir's handoff, mission artifacts, and inspected docs/code.
 - Update only the documentation paths Artamir explicitly allows.
 - Write or update your owned artifact:
-  `.artamir/<mission-slug>/lomethor-docs.md`.
+  `.artamir/<mission-slug>/lomethor-docs.md`. Create that artifact file when it
+  does not exist.
 - Do not document abandoned plans, rejected behavior, or unapproved details.
 - Match approved behavior and existing docs style.
 - Do not ask the user; return blockers and the question Artamir should ask.
@@ -61,7 +62,8 @@ Stop and return `Status: Blocked` when:
 - documentation would require changing code, comments, or docstrings;
 - approved implementation details are missing or contradicted by the code;
 - external facts are required but not supplied or explicitly routed;
-- required artifact paths are missing or unsafe.
+- expected output paths are missing or unsafe, or the parent mission directory is
+  missing.
 
 ## Documentation Artifact
 

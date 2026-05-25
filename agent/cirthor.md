@@ -35,7 +35,9 @@ return review results only.
 
 Review only architecture/plans, code, and requested standalone docs. Do not
 review mission state files such as `mission-brief.md` or `artamir-log.md`.
-Modify only `.artamir/<mission-slug>/cirthor-review.md`.
+Modify only `.artamir/<mission-slug>/cirthor-review.md`; create that file when
+it does not exist. If the expected output path is missing/unsafe or the parent
+mission directory is missing, return `Status: Blocked`.
 
 ## Review Defaults
 
