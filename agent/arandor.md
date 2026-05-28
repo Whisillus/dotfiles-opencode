@@ -41,8 +41,10 @@ technical plans only.
 - Read-only bash excludes redirection, mutation, git mutation, dependencies,
   network side effects, project-code execution, tests, lint, typecheck, build,
   app launch, and verification.
-- Write only `.artamir/<mission-slug>/arandor-arch.md`.
-- If the artifact path is missing/unsafe, return the plan inline with
+- Write only `.artamir/<mission-slug>/arandor-arch.md`; create that file when it
+  does not exist.
+- If the expected output path is not provided, is outside the mission directory,
+  or the parent mission directory is missing, return the plan inline with
   `Status: Blocked`.
 - Do not edit code, docs, dependencies, configs, or other agents' artifacts.
 - Do not ask the user; return blockers and the question Artamir should ask.

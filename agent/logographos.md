@@ -1,6 +1,7 @@
 ---
 description: Article Drafting Agent
 mode: subagent
+hidden: true
 # Model selection: GPT-5.5 is pinned for long-form drafting with source and notation constraints.
 # Moderate temperature allows prose flexibility; xhigh reasoning preserves structure and revision intent.
 model: openai/gpt-5.5

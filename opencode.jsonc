@@ -14,6 +14,7 @@
     "external_directory": {
         "*": "ask",
         "~/.config/opencode/skill/*": "allow",
+        "~/workspace/reference/**": "allow",
         "/tmp/*": "allow",
     },
   },
@@ -24,6 +25,12 @@
     },
     "build": {
       "disable": true
+    },
+    "explore": {
+      "hidden": true
+    },
+    "general": {
+      "hidden": true
     }
   },
 
