@@ -1,6 +1,7 @@
 ---
 description: Inquisitor research agent
 mode: subagent
+hidden: true
 # Model selection: GPT-5.5 is pinned for careful research synthesis and technical uncertainty.
 # Very low temperature minimizes variance; xhigh reasoning supports source comparison and caveats.
 model: openai/gpt-5.5
