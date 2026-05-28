@@ -14,6 +14,8 @@ Use this skill whenever the user asks to create, update, refactor, debug, or tes
 - Prefer project-local execution over host-global changes.
 - Make the smallest correct change. Avoid repo-wide refactors, config churn, or mass formatting unless the task calls for it.
 - Prefer inlining simple one-off logic over extracting tiny helper functions; create a function only when it improves clarity, reuse, testing, or side-effect isolation.
+- Do not create private helper functions just to organize one or two lines. Inline single-use logic unless a helper names a non-obvious concept, is reused, improves tests, or isolates side effects.
+- Before adding helper logic, search nearby modules and shared utility packages for existing functions, constants, classes, or domain abstractions that already express the operation. Reuse project utilities instead of duplicating formulas or reimplementing behavior inline.
 - Never commit secrets. Prefer existing environment variables or a secret manager; use a local untracked `.env` file only for local development when needed.
 - Add `timeout=` to `subprocess.run(...)` in tests and helper scripts that execute commands.
 - Avoid `shell=True` unless shell semantics are required or the existing code already depends on it.
@@ -42,10 +44,11 @@ pytest
 
 1. Read Python config, docs, and nearby code before editing.
 2. Match naming, imports, exceptions, type hints, logging, and test style already used in the repo.
-3. Implement the smallest change that solves the task.
-4. Add or update tests as close as practical to the changed behavior.
-5. Run targeted checks first, then broader project checks if needed.
-6. If a tool reports unrelated failures, avoid broad cleanup unless the user asks.
+3. Search for existing helpers/utilities before adding new logic, especially for math, path handling, parsing, serialization, validation, retries, and domain conventions.
+4. Implement the smallest change that solves the task.
+5. Add or update tests as close as practical to the changed behavior.
+6. Run targeted checks first, then broader project checks if needed.
+7. If a tool reports unrelated failures, avoid broad cleanup unless the user asks.
 
 ## New Code Defaults
 
@@ -62,37 +65,23 @@ pytest
 
 ### Scripts and CLIs
 
-- Use `argparse` by default unless the repo already uses `click`, `typer`, or another CLI framework.
+- Do not introduce `argparse`, `click`, `typer`, or another CLI parser unless the user asks for command-line options, the existing file is already a CLI, or the task explicitly requires user-facing argument parsing.
+- Preserve the existing invocation style. For small scripts, prefer constants, direct function parameters, or the existing `main()` shape over adding a parser.
 - Prefer a `main()` function that returns an integer exit code.
 - Write normal output to stdout and error messages to stderr.
 - Add `--dry-run` when a script mutates files, systems, or remote state.
 - Validate input early and fail with clear, actionable messages.
-- Keep parsing, business logic, and side effects in separate functions when possible.
+- Separate parsing, business logic, and side effects only when the code is large enough that separation improves clarity, reuse, or tests. For small scripts, keep straightforward one-off logic inline.
+- Before finalizing, review every new `_private_helper`. Inline it when it is single-use and simpler than its call site.
 
-Canonical CLI pattern:
+Minimal script shape when a file needs executable entry-point behavior:
 
 ```python
-import argparse
 import sys
 
 
-def build_parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(description="Describe the script clearly")
-    parser.add_argument(
-        "--dry-run",
-        action="store_true",
-        help="Show actions without changing anything",
-    )
-    return parser
-
-
-def main(argv: list[str] | None = None) -> int:
-    args = build_parser().parse_args(argv)
+def main() -> int:
     try:
-        if args.dry_run:
-            print("Would perform work")
-            return 0
-
         print("Work complete")
         return 0
     except ValueError as exc:
@@ -154,6 +143,9 @@ Subprocess tests are appropriate when the CLI wrapper itself is part of the beha
 - Hiding side effects inside utility functions that look pure
 - Broad reformatting or import cleanup unrelated to the task
 - Adding new tooling when the repo already has a Python workflow
+- Creating one-line or single-use `_private_helper()` functions that are less clear than inline code
+- Adding a CLI parser when the user did not ask for command-line options and the existing file was not already a CLI
+- Reimplementing existing project helpers inline, such as writing `(x + y - 1) // y` when the codebase already has `ceil_div(x, y)`
 
 ## Bundled Resources
 
