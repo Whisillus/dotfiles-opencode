@@ -8,35 +8,26 @@ temperature: 0.1
 reasoningEffort: xhigh
 reasoningSummary: auto
 textVerbosity: medium
-tools:
-  read: true
-  glob: true
-  grep: true
-  websearch: true
-  webfetch: true
-  question: true
-  write: false
-  edit: false
-  bash: true
-  task: false
 permission:
+  read: allow
+  glob: allow
+  grep: allow
+  list: allow
+  question: allow
+  edit: deny
+  task: deny
+  webfetch: allow
+  websearch: allow
   bash:
-    "*": "ask"
-    "ls *": "allow"
-    "pwd": "allow"
-    "find *": "allow"
-    "rg *": "allow"
-    "grep *": "allow"
-    "cat *": "allow"
-    "head *": "allow"
-    "tail *": "allow"
-    "git diff*": "allow"
-    "git grep*": "allow"
-    "git status*": "allow"
-    "git log*": "allow"
-    "git show *": "allow"
-  webfetch: "allow"
-  websearch: "allow"
+    "*": ask
+    pwd: allow
+    "ls *": allow
+    "rg *": allow
+    "git diff*": allow
+    "git grep*": allow
+    "git status*": allow
+    "git log*": allow
+    "git show *": allow
 ---
 
 # Inquisitor
