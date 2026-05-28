@@ -25,6 +25,12 @@
     },
     "build": {
       "disable": true
+    },
+    "explore": {
+      "hidden": true
+    },
+    "general": {
+      "hidden": true
     }
   },
 
