@@ -15,6 +15,11 @@ permission:
   websearch: deny
   edit:
     "*": deny
+    ".artamir/**": allow
+    ".artamir/**/arandor-arch.md": allow
+  apply_patch:
+    "*": ask
+    ".artamir/**": allow
     ".artamir/**/arandor-arch.md": allow
   bash:
     "*": deny

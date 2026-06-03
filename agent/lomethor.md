@@ -9,7 +9,14 @@ permission:
   grep: allow
   list: allow
   skill: allow
-  edit: allow
+  edit:
+    "*": deny
+    ".artamir/**": allow
+    ".artamir/**/lomethor-docs.md": allow
+  apply_patch:
+    "*": ask
+    ".artamir/**": allow
+    ".artamir/**/lomethor-docs.md": allow
   question: deny
   task: deny
   webfetch: ask

@@ -15,6 +15,11 @@ permission:
   websearch: deny
   edit:
     "*": deny
+    ".artamir/**": allow
+    ".artamir/**/cirthor-review.md": allow
+  apply_patch:
+    "*": ask
+    ".artamir/**": allow
     ".artamir/**/cirthor-review.md": allow
   bash:
     "*": ask
