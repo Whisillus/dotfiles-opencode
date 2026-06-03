@@ -17,7 +17,12 @@ permission:
   question: allow
   edit:
     "*": deny
-    ".*/**/inquisitor-notes.md": allow
+    ".artamir/**": allow
+    ".artamir/**/inquisitor-notes.md": allow
+  apply_patch:
+    "*": ask
+    ".artamir/**": allow
+    ".artamir/**/inquisitor-notes.md": allow
   task: deny
   webfetch: allow
   websearch: allow
