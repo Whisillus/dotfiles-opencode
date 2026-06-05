@@ -3,6 +3,7 @@ description: Static review and explicit verification subagent for Artamir coding
 mode: subagent
 hidden: true
 temperature: 0.0
+reasoningEffort: xhigh
 permission:
   read: allow
   glob: allow
@@ -13,24 +14,9 @@ permission:
   task: deny
   webfetch: deny
   websearch: deny
-  edit:
-    "*": deny
-    ".artamir/**": allow
-    ".artamir/**/cirthor-review.md": allow
-  apply_patch:
-    "*": ask
-    ".artamir/**": allow
-    ".artamir/**/cirthor-review.md": allow
-  bash:
-    "*": ask
-    pwd: allow
-    ls: allow
-    "ls *": allow
-    "git status*": allow
-    "git diff*": allow
-    "git log*": allow
-    "git show *": allow
-    "rg *": allow
+  edit: allow
+  apply_patch: allow
+  bash: allow
 ---
 
 # Cirthor

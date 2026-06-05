@@ -15,27 +15,12 @@ permission:
   grep: allow
   list: allow
   question: allow
-  edit:
-    "*": deny
-    ".artamir/**": allow
-    ".artamir/**/inquisitor-notes.md": allow
-  apply_patch:
-    "*": ask
-    ".artamir/**": allow
-    ".artamir/**/inquisitor-notes.md": allow
+  edit: allow
+  apply_patch: allow
   task: deny
   webfetch: allow
   websearch: allow
-  bash:
-    "*": ask
-    pwd: allow
-    "ls *": allow
-    "rg *": allow
-    "git diff*": allow
-    "git grep*": allow
-    "git status*": allow
-    "git log*": allow
-    "git show *": allow
+  bash: allow
 ---
 
 # Inquisitor

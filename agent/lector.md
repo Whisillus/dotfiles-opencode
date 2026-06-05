@@ -19,8 +19,12 @@ tools:
   question: false
   write: true
   edit: true
-  bash: false
+  bash: true
   task: false
+permission:
+  edit: allow
+  apply_patch: allow
+  bash: allow
 ---
 
 # Lector

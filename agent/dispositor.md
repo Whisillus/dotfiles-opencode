@@ -6,7 +6,7 @@ hidden: true
 # Low temperature keeps outlines stable; high reasoning is enough for planning without final audit.
 model: openai/gpt-5.5
 temperature: 0.2
-reasoningEffort: high
+reasoningEffort: xhigh
 reasoningSummary: auto
 textVerbosity: medium
 tools:
@@ -19,8 +19,12 @@ tools:
   question: false
   write: true
   edit: true
-  bash: false
+  bash: true
   task: false
+permission:
+  edit: allow
+  apply_patch: allow
+  bash: allow
 ---
 
 # Dispositor

@@ -20,6 +20,8 @@ tools:
   bash: true
   task: true
 permission:
+  edit: allow
+  apply_patch: allow
   task:
     "*": deny
     "dispositor": allow
@@ -28,17 +30,7 @@ permission:
     "redactor": allow
     "explore": allow
     "inquisitor": allow
-  bash:
-    "*": "ask"
-    "ls *": "allow"
-    "pwd": "allow"
-    "find *": "allow"
-    "rg *": "allow"
-    "grep *": "allow"
-    "cat *": "allow"
-    "head *": "allow"
-    "tail *": "allow"
-    "git *": "deny"
+  bash: allow
   webfetch: "allow"
   websearch: "allow"
 ---

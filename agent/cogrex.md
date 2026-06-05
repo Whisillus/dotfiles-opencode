@@ -2,12 +2,14 @@
 description: Primary assistant for direct user work.
 mode: primary
 temperature: 0.0
+reasoningEffort: xhigh
 permission:
   read: allow
   glob: allow
   grep: allow
   list: allow
   edit: allow
+  apply_patch: allow
   bash: allow
   task:
     "*": deny
