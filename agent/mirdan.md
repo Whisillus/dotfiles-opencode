@@ -3,7 +3,7 @@ description: Implementation subagent for Artamir coding missions.
 mode: subagent
 hidden: true
 temperature: 0.0
-reasoningEffort: xhigh
+reasoningEffort: medium
 permission:
   read: allow
   glob: allow

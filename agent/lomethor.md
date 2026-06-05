@@ -3,7 +3,7 @@ description: Documentation subagent for explicit Artamir documentation requests.
 mode: subagent
 hidden: true
 temperature: 0.0
-reasoningEffort: xhigh
+reasoningEffort: medium
 permission:
   read: allow
   glob: allow

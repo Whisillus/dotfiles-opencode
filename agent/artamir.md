@@ -2,7 +2,7 @@
 description: Coding orchestrator that manages .artamir missions, delegates planning, implementation, review, and requested documentation.
 mode: primary
 temperature: 0.0
-reasoningEffort: xhigh
+reasoningEffort: high
 permission:
   read: allow
   glob: allow
