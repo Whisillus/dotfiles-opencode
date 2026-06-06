@@ -3,7 +3,7 @@ name: cuda-general-reference
 description: CUDA general reference map for GPU architecture, CUDA, PTX, NVCC, NVRTC, cuTile, and Tile IR. Use when answering or implementing work about NVIDIA GPU architecture, CUDA programming, GPU kernels, PTX, compiler/runtime compilation, tensor cores, TMA, WGMMA, CUTLASS/CuTe, FlashAttention, FlashMLA, or TileLang.
 ---
 
-# GPU Architecture and Computing References
+# CUDA General Reference
 
 Use this skill to quickly locate trusted references for NVIDIA GPU architecture,
 CUDA programming, CUDA compilers, PTX, tile programming, and high-performance GPU
@@ -31,12 +31,17 @@ Local references live under:
 ~/workspace/reference
 ```
 
-Official and open-source repository snapshots, when available locally, can be
-found under `~/workspace/reference`. Inspect that directory directly for the
-current set of repositories instead of relying on a hard-coded list.
+- Find repository references in `~/workspace/reference/repo/`.
+- Find articles, papers, notes, and supporting material in
+  `~/workspace/reference/article/`.
+
+Inspect those directories directly for the current reference material. Do not
+rely on a hard-coded local repository inventory in this skill.
 
 Treat local repositories as implementation examples, not as CUDA specification.
-For official behavior, cross-check NVIDIA docs.
+For official behavior, cross-check NVIDIA docs. Do not assume a local snapshot
+matches latest upstream; verify the local version, branch, or commit when that
+matters.
 
 ## Official CUDA Documentation Hub
 
@@ -127,8 +132,9 @@ compatibility guides, and architecture tuning guides.
 - Tile programming: CUDA Programming Guide tile-kernel sections, cuTile Python,
   CUDA Tile IR, CUDA Tile C++ API, and relevant local repository docs when
   present.
-- Real high-performance kernel examples: relevant local repositories under
-  `~/workspace/reference` when present.
+- Local implementation examples, project docs, tests, and benchmark notes:
+  inspect repository references under `~/workspace/reference/repo/` and articles
+  under `~/workspace/reference/article/` when present.
 
 ## Working Rules
 
@@ -136,6 +142,8 @@ compatibility guides, and architecture tuning guides.
   etc.) and CUDA Toolkit version before making architecture-specific claims.
 - Prefer local `grep`/glob/read inspection for local repositories; prefer
   official NVIDIA URLs for specifications.
+- When using local snapshots, say whether a claim comes from NVIDIA docs,
+  project docs, local source, local tests, or benchmark notes.
 - For performance-sensitive advice, separate what is specified, what is a common
   optimization heuristic, and what requires benchmarking.
 - When citing an instruction, API, compiler flag, or architecture capability,
