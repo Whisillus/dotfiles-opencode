@@ -32,6 +32,7 @@ Local references live under:
 ```
 
 - Find repository references in `~/workspace/reference/repo/`.
+- Find local CUDA documentation snapshots in `~/workspace/reference/docs/`.
 - Find articles, papers, notes, and supporting material in
   `~/workspace/reference/article/`.
 
@@ -133,8 +134,9 @@ compatibility guides, and architecture tuning guides.
   CUDA Tile IR, CUDA Tile C++ API, and relevant local repository docs when
   present.
 - Local implementation examples, project docs, tests, and benchmark notes:
-  inspect repository references under `~/workspace/reference/repo/` and articles
-  under `~/workspace/reference/article/` when present.
+  inspect repository references under `~/workspace/reference/repo/`, local CUDA
+  documentation under `~/workspace/reference/docs/`, and articles under
+  `~/workspace/reference/article/` when present.
 
 ## Working Rules
 
