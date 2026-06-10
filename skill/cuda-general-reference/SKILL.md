@@ -1,6 +1,6 @@
 ---
 name: cuda-general-reference
-description: CUDA general reference map for GPU architecture, CUDA, PTX, NVCC, NVRTC, cuTile, and Tile IR. Use when answering or implementing work about NVIDIA GPU architecture, CUDA programming, GPU kernels, PTX, compiler/runtime compilation, tensor cores, TMA, WGMMA, CUTLASS/CuTe, FlashAttention, FlashMLA, or TileLang.
+description: CUDA general reference map for GPU architecture, CUDA, PTX, NVCC, NVRTC, cuTile, CuTe DSL, and Tile IR. Use when answering or implementing work about NVIDIA GPU architecture, CUDA programming, GPU kernels, PTX, compiler/runtime compilation, tensor cores, TMA, WGMMA, CUTLASS/CuTe/CuTe DSL, FlashAttention, FlashMLA, or TileLang.
 ---
 
 # CUDA General Reference
@@ -70,6 +70,16 @@ compatibility guides, and architecture tuning guides.
 | Latest CUDA Tile IR | <https://docs.nvidia.com/cuda/tile-ir/latest/index.html> | Latest Tile IR version when the unversioned URL redirects or version-specific details matter. |
 | CUDA Tile C++ API Reference | <https://docs.nvidia.com/cuda/cuda-tile-cpp-api-reference/index.html> | CUDA Tile C++ API, `cuda_tile.h`, tile C++ syntax/API details. |
 
+## CUTLASS And CuTe DSL
+
+| Topic | URL | Use for |
+| --- | --- | --- |
+| CUTLASS Documentation | <https://docs.nvidia.com/cutlass/latest/> | CUTLASS C++ and Python DSL documentation, release notes, tutorials, and API reference. |
+| CuTe DSL | <https://docs.nvidia.com/cutlass/latest/media/docs/pythonDSL/cute_dsl.html> | CuTe DSL guide index: introduction, code generation, control flow, JIT arguments/types/caching/options, framework integration, debugging, autotuning, AOT compilation, limitations, and FAQs. |
+| CuTe DSL API | <https://docs.nvidia.com/cutlass/latest/media/docs/pythonDSL/cute_dsl_api.html> | Python API reference for `cute`, `cute.arch`, runtime APIs, `cute_nvgpu`, `pipeline`, and `utils`. |
+| CuTe DSL `cute_nvgpu` API | <https://docs.nvidia.com/cutlass/latest/media/docs/pythonDSL/cute_dsl_api/cute_nvgpu.html> | GPU-specific DSL API families, including warp, warpgroup, cpasync, and tcgen05 submodules. |
+| CUTLASS C++ CuTe | <https://docs.nvidia.com/cutlass/latest/media/docs/cpp/cute/index.html> | C++ CuTe layout/tensor/algorithm/MMA/TMA tutorials. Use separately from CuTe DSL Python APIs because names and abstractions differ. |
+
 ## CUDA Compiler and Runtime Compilation
 
 | Topic | URL | Use for |
@@ -131,8 +141,8 @@ compatibility guides, and architecture tuning guides.
 - ABI-compliant generated PTX and linking with other PTX/CUDA code: PTX
   Interoperability.
 - Tile programming: CUDA Programming Guide tile-kernel sections, cuTile Python,
-  CUDA Tile IR, CUDA Tile C++ API, and relevant local repository docs when
-  present.
+  CUDA Tile IR, CUDA Tile C++ API, CUTLASS CuTe DSL docs, and relevant local
+  repository docs when present.
 - Local implementation examples, project docs, tests, and benchmark notes:
   inspect repository references under `~/workspace/reference/repo/`, local CUDA
   documentation under `~/workspace/reference/docs/`, and articles under
