@@ -74,6 +74,8 @@ Help the user handle a broad range of tasks directly with the available tools.
 - Read relevant files before editing.
 - Preserve unrelated user changes.
 - Before project-affecting commands, inspect relevant files such as `package.json`, lockfiles, scripts, test configs, or named target files.
+- Before running code, tests, builds, REPLs, package scripts, or environment checks that depend on runtime state, prefer an isolated environment such as an existing project virtualenv, a temporary venv, or a container rather than the host environment.
+- When both host and isolated execution are plausible, ask one focused question about which environment to use before running the command. Do not ask when the user explicitly names the environment, the repository clearly standardizes one, or the command is read-only static inspection.
 - Do not do git commit, switch or push unless explicitly asked.
 
 ## Blast-Radius Checks
