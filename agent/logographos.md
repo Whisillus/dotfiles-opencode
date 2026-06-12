@@ -2,9 +2,6 @@
 description: Article Drafting Agent
 mode: subagent
 hidden: true
-# Model selection: GPT-5.5 is pinned for long-form drafting with source and notation constraints.
-# Moderate temperature allows prose flexibility; xhigh reasoning preserves structure and revision intent.
-model: openai/gpt-5.5
 temperature: 0.4
 reasoningEffort: xhigh
 reasoningSummary: auto
@@ -45,7 +42,7 @@ Read only paths Scriptor provides. Typical inputs:
 - target article, explicit source, or prior draft when used as the base
 - `lector-review.md` or `redactor-review.md` only when review findings drive this
   candidate
-- `skill/hugo-latex-notation/SKILL.md` when math or LaTeX appears or changes
+- relevant `hugo-*` skills when math, notation, or Hugo rendering may matter
 
 Use provided user text as base/context only. Do not overwrite it. Do not perform
 web research or call agents.
@@ -85,8 +82,8 @@ What Scriptor should provide:
   in your response to Scriptor.
 - Do not leave placeholders such as `[source needed]` in article candidates.
 - Keep headings prose-friendly. Move complex math into body display equations.
-- For math, use Scriptor's math policy and `skill/hugo-latex-notation/SKILL.md`.
-  Default delimiters are inline `$...$` and display `$$...$$`.
+- For math, notation, and Hugo rendering, use Scriptor's policy and check relevant
+  `hugo-*` skills. Default delimiters are inline `$...$` and display `$$...$$`.
 
 
 Do not put self-review, routing notes, caveats, or unresolved placeholders in

@@ -2,9 +2,6 @@
 description: Editorial Review Agent
 mode: subagent
 hidden: true
-# Model selection: GPT-5.5 is pinned for conservative editorial review and promotion gates.
-# Low temperature avoids speculative edits; xhigh reasoning supports consistency and notation audits.
-model: openai/gpt-5.5
 temperature: 0.2
 reasoningEffort: xhigh
 reasoningSummary: auto
@@ -64,7 +61,7 @@ Read only paths Scriptor provides. Typical inputs:
 - relevant `state.md` sections
 - relevant `context-notes.md` sections
 - target article or explicit source excerpts only when Scriptor says they matter
-- `skill/hugo-latex-notation/SKILL.md` when equation or notation audit is required
+- relevant `hugo-*` skills when equation, notation, or Hugo rendering audit is required
 
 If `Discussion lock: open`, refuse review work.
 
@@ -138,8 +135,8 @@ mark the review `substantive-change-needed` instead of editing around it.
 
 Audit equations and notation when the article contains displayed equations,
 nontrivial notation, changed math, math feedback, heading math, delimiter risk, or
-Scriptor requests audit. Use `skill/hugo-latex-notation/SKILL.md`. Do not claim
-deep mathematical correctness unless verified from provided context.
+Scriptor requests audit. Check relevant `hugo-*` skills. Do not claim deep
+mathematical correctness unless verified from provided context.
 
 Write `redactor-review.md`:
 
@@ -168,7 +165,7 @@ Polish status: not requested / minor-only / blocked / substantive-change-needed
 
 Status: not needed / passed / revise required / unresolved
 Scope:
-Skill standard: hugo-latex-notation
+Skill standard: relevant `hugo-*` skills
 Findings:
 Required equation or notation fixes:
 Unresolved mathematical correctness risks:

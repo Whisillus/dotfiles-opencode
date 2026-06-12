@@ -1,9 +1,6 @@
 ---
 description: Scriptor
 mode: primary
-# Model selection: GPT-5.5 is pinned for orchestration, state tracking, and gate decisions.
-# Low temperature keeps handoffs deterministic; xhigh reasoning supports long workflow context.
-model: openai/gpt-5.5
 temperature: 0.2
 reasoningEffort: xhigh
 reasoningSummary: auto
@@ -274,9 +271,8 @@ Use the lightest route that is safe:
   reviews the exact article candidate.
 - Any promoted candidate: Redactor reviews the exact article unless the user explicitly
   accepts reduced gates.
-- Math or LaTeX appears or changes: Logographos uses
-  `skill/hugo-latex-notation/SKILL.md`; Redactor audits the exact article with the
-  same standard.
+- Math or Hugo-rendered notation appears or changes: Logographos checks relevant
+  `hugo-*` skills; Redactor audits the exact article with the same standard.
 - Minor target edit: request Redactor `review article` with polish scope; apply
   only when meaning, structure, source support, facts, and math are unchanged, the
   user confirms target application, and skipped gates are recorded in `state.md`.
