@@ -5,6 +5,17 @@ description: Use when the user asks about CuTe DSL basics, cutlass.cute, cute.ji
 
 # CuTe DSL Basic
 
+## Imports
+
+- Use these default CuTe DSL imports.
+- Do not add other `cutlass` module imports unless the user explicitly requests them.
+
+```python
+import cutlass
+import cutlass.cute as cute
+import cutlass.pipeline as pipeline
+```
+
 ## Major Terminology
 
 - Use only MN-major and K-major terminology for CuTe DSL operand layouts.
