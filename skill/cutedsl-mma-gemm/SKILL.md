@@ -24,11 +24,15 @@ atom_layout_mnk = cute.make_layout(atom_shape_mnk, stride=atom_stride_mnk)
 tiled_mma = cute.make_tiled_mma(mma_atom, atom_layout_mnk)
 ```
 
-### WMMA
+## WMMA
 
 - WMMA is synchronous.
 - All `cute.nvgpu.warp` MMA ops support only A K-major and B K-major operand layouts.
 - For non-mixed-precision warp-level MMA ops, assert `a_dtype == b_dtype`, define `ab_type = a_dtype`, and pass `ab_type` to the op constructor.
+- Supported architectures:
+  - `MmaF16BF16Op`: SM80+.
+  - `MmaFP8Op`: SM89+.
+  - `MmaMXF4Op`, `MmaMXF4NVF4Op`, `MmaMXF8Op`, and `MmaMXF8F6F4Op`: SM120-family, such as `sm_120a`, `sm_120f`, `sm_121a`, and `sm_121f`.
 - Supported instruction shapes:
   - `MmaF16BF16Op`: `(16, 8, 8)` or `(16, 8, 16)`.
   - `MmaFP8Op`: `(16, 8, 16)` or `(16, 8, 32)`.
@@ -43,10 +47,11 @@ mma_inst_shape_mnk = (16, 8, 16)
 mma_op = cute.nvgpu.warp.MmaF16BF16Op(ab_type, acc_dtype, mma_inst_shape_mnk)
 ```
 
-### WGMMA
+## WGMMA
 
 - 16-bit WGMMA uses the same A/B type.
 - 8-bit WGMMA uses independent A/B types.
+- Supported architecture: `MmaF16BF16Op`, `MmaF8Op`, and `MmaI8Op` require `sm_90a`.
 - Supported instruction shapes:
   - `MmaF16BF16Op`: `(64, N, 16)`, where `8 <= N <= 256` and `N % 8 == 0`.
   - `MmaF8Op`: `(64, N, 32)`, where `8 <= N <= 256` and `N % 8 == 0`.
