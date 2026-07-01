@@ -7,8 +7,6 @@ description: Use when the user asks about CuTe DSL copy, tiled copy, copy atoms,
 
 Build copy code in this order: choose a copy operation descriptor, create a copy atom, then create a tiled copy when a tiled TV mapping is needed.
 
-Copy operation descriptors are ops, not atoms. Create an op first, then pass it to `cute.make_copy_atom(...)`.
-
 ## SIMT Copy Op
 
 Use these ops for thread-level SIMT copies between global, shared, and register storage.
@@ -63,6 +61,132 @@ Op inputs:
 ```python
 copy_op = cute.nvgpu.cpasync.CopyG2SOp(cache_mode=cute.nvgpu.LoadCacheMode.GLOBAL)
 copy_atom = cute.make_copy_atom(copy_op, dtype, num_bits_per_copy=128)
+```
+
+## TMA Op
+
+Use TMA copy ops for descriptor-based bulk tensor copies between GMEM and SMEM.
+
+- `cute.nvgpu.cpasync.CopyBulkTensorTileG2SOp`: tiled bulk tensor GMEM -> SMEM load.
+- `cute.nvgpu.cpasync.CopyBulkTensorTileG2SMulticastOp`: tiled bulk tensor GMEM -> SMEM multicast load.
+- `cute.nvgpu.cpasync.CopyBulkTensorIm2ColG2SOp`: im2col bulk tensor GMEM -> SMEM load.
+- `cute.nvgpu.cpasync.CopyBulkTensorIm2ColG2SMulticastOp`: im2col bulk tensor GMEM -> SMEM multicast load.
+- `cute.nvgpu.cpasync.CopyBulkTensorTileS2GOp`: tiled bulk tensor SMEM -> GMEM store.
+- `cute.nvgpu.cpasync.CopyReduceBulkTensorTileS2GOp`: tiled bulk tensor SMEM -> GMEM reduction store.
+- `cute.nvgpu.cpasync.CopyBulkTensorIm2ColS2GOp`: im2col bulk tensor SMEM -> GMEM store.
+- Tensor TMA ops require SM90+.
+- TMA tensor copy ops are copy-operation descriptors, but they do not use plain `cute.make_copy_atom(...)` atom construction.
+- TMA load ops take `cta_group`, which selects the TMA instruction issue form. Use `CtaGroup.ONE` for the one-CTA issue form or `CtaGroup.TWO` for the two-CTA issue form. Prefer `CtaGroup.ONE` unless the kernel is intentionally built around two-CTA TMA; `CtaGroup.TWO` requires SM100+.
+- `CopyReduceBulkTensorTileS2GOp` takes `reduction_kind`, which selects the hardware reduction performed while storing from SMEM to GMEM. Use `cute.ReductionKind.ADD`, `MIN`, `MAX`, `INC`, `DEC`, `AND`, `OR`, or `XOR`; `ADD` is the default.
+- Plain TMA store ops do not take op constructor inputs.
+
+```python
+tma_op = cute.nvgpu.cpasync.CopyBulkTensorTileG2SOp(cta_group=cta_group)
+tma_op = cute.nvgpu.cpasync.CopyBulkTensorTileS2GOp()
+tma_op = cute.nvgpu.cpasync.CopyReduceBulkTensorTileS2GOp(
+    reduction_kind=cute.ReductionKind.ADD
+)
+tma_op = cute.nvgpu.cpasync.CopyBulkTensorIm2ColS2GOp()
+```
+
+## TMA Atom
+
+Use TMA atom helpers to build descriptor-backed TMA atoms from TMA copy ops.
+
+- Create tiled TMA tensor atoms with `cute.nvgpu.cpasync.make_tiled_tma_atom(...)`.
+- Create im2col TMA tensor atoms with `cute.nvgpu.cpasync.make_im2col_tma_atom(...)`.
+- Do not pass TMA tensor copy ops directly to `cute.make_copy_atom(...)`; construct TMA atoms with TMA-specific helper APIs.
+- `make_tiled_tma_atom(...)` and `make_im2col_tma_atom(...)` return `TmaInfo`, which can be unpacked as `tma_atom, tma_tensor`; it also carries `smem_layout`.
+- `internal_type` optionally selects an internal TMA data format when the tensor element type does not directly match the TMA copy format.
+- `tma_atom` is the TMA copy atom produced from the TMA op, GMEM tensor, SMEM layout, and CTA tiler.
+- `tma_tensor` is the descriptor-coordinate tensor returned with the atom; it maps logical GMEM coordinates to coordinates the TMA unit can consume.
+
+Tiled helper inputs:
+
+- `cute.nvgpu.cpasync.make_tiled_tma_atom(op, gmem_tensor, smem_layout, cta_tiler, num_multicast=1, *, internal_type=None)`.
+- `op`: TMA copy op descriptor.
+- `gmem_tensor`: GMEM tensor used to build the TMA descriptor and returned TMA tensor.
+- `smem_layout`: SMEM layout used to construct the TMA atom; may be non-staged or staged.
+- `cta_tiler`: CTA-level tiler used to map tensor coordinates into TMA descriptor coordinates.
+- `num_multicast`: multicast factor; use `1` for non-multicast G2S ops.
+- `internal_type`: optional internal TMA data type.
+
+```python
+tma_op = cute.nvgpu.cpasync.CopyBulkTensorTileG2SOp(cta_group=cta_group)
+smem_layout = ...
+cta_tiler = ...
+tma_info = cute.nvgpu.cpasync.make_tiled_tma_atom(
+    tma_op,
+    gmem_tensor,
+    smem_layout,
+    cta_tiler,
+    num_multicast=num_multicast,
+    internal_type=internal_type,
+)
+tma_atom, tma_tensor = tma_info
+```
+
+```python
+tma_op = cute.nvgpu.cpasync.CopyBulkTensorTileS2GOp()
+smem_layout = ...
+cta_tiler = ...
+tma_info = cute.nvgpu.cpasync.make_tiled_tma_atom(
+    tma_op,
+    gmem_tensor,
+    smem_layout,
+    cta_tiler,
+    internal_type=internal_type,
+)
+tma_atom, tma_tensor = tma_info
+```
+
+### TMA Im2Col
+
+Use `cute.nvgpu.cpasync.make_im2col_tma_atom(...)` for im2col TMA atoms.
+
+- `cute.nvgpu.cpasync.make_im2col_tma_atom(op, gmem_tensor, smem_layout, cta_tiler, lower_corner_whd=None, upper_corner_whd=None, lower_padding_whd=None, upper_padding_whd=None, stride_whd=None, lower_srt=None, stride_srt=None, num_multicast=1, *, internal_type=None)`.
+- For im2col G2S loads, provide all im2col descriptor tuples: `lower_corner_whd`, `upper_corner_whd`, `lower_padding_whd`, `upper_padding_whd`, `stride_whd`, `lower_srt`, and `stride_srt`.
+- Im2col S2G stores do not need the im2col descriptor tuples.
+- `lower_corner_whd` and `upper_corner_whd` define the W/H/D input window used by the im2col load.
+- `lower_padding_whd` and `upper_padding_whd` define the W/H/D padding region around that input window.
+- `stride_whd` defines the convolution stride in W/H/D coordinates.
+- `lower_srt` defines the lower S/R/T filter-coordinate corner used by the im2col mapping.
+- `stride_srt` defines the S/R/T dilation stride used by the im2col mapping.
+
+```python
+tma_op = cute.nvgpu.cpasync.CopyBulkTensorIm2ColG2SOp(cta_group=cta_group)
+smem_layout = ...
+cta_tiler = ...
+tma_info = cute.nvgpu.cpasync.make_im2col_tma_atom(
+    tma_op,
+    gmem_tensor,
+    smem_layout,
+    cta_tiler,
+    lower_corner_whd=lower_corner_whd,
+    upper_corner_whd=upper_corner_whd,
+    lower_padding_whd=lower_padding_whd,
+    upper_padding_whd=upper_padding_whd,
+    stride_whd=stride_whd,
+    lower_srt=lower_srt,
+    stride_srt=stride_srt,
+    num_multicast=num_multicast,
+    internal_type=internal_type,
+)
+tma_atom, tma_tensor = tma_info
+```
+
+```python
+tma_op = cute.nvgpu.cpasync.CopyBulkTensorIm2ColS2GOp()
+smem_layout = ...
+cta_tiler = ...
+tma_info = cute.nvgpu.cpasync.make_im2col_tma_atom(
+    tma_op,
+    gmem_tensor,
+    smem_layout,
+    cta_tiler,
+    internal_type=internal_type,
+)
+tma_atom, tma_tensor = tma_info
 ```
 
 ## Warp Matrix Copy Op
