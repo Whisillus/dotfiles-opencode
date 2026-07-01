@@ -199,9 +199,6 @@ copy_atom = cute.make_copy_atom(
 - `EVICT_UNCHANGED`: preserve the existing cache eviction priority when possible.
 - Prefer `EVICT_NORMAL` unless profiling or a known access pattern justifies another hint.
 
-<!-- TODO: Document shared_space. -->
-<!-- TODO: Document invariant. -->
-
 ### Generic SIMT Cache Mode
 
 - `load_cache_mode` and `store_cache_mode` are parallel cache-mode hints, but they use separate enums and apply to different copy directions.
@@ -218,6 +215,20 @@ copy_atom = cute.make_copy_atom(
 - `cute.nvgpu.StoreCacheMode.STREAMING`: `.cs`, evict-first streaming store hint.
 - `cute.nvgpu.StoreCacheMode.WRITE_THROUGH`: `.wt`, write-through system-level store behavior.
 - `cute.nvgpu.StoreCacheMode.NONE`: no explicit store cache operator; use backend/default behavior.
+
+### Shared Space
+
+- `shared_space` selects the shared-memory address space used by the generated copy instruction.
+- It applies to `CopyG2ROp`, `CopyR2GOp`, `CopyS2ROp`, and `CopyR2SOp` atom construction.
+- `cute.nvgpu.SharedSpace.CTA`: shared memory is addressed within a CTA.
+- `cute.nvgpu.SharedSpace.CLUSTER`: shared memory is addressed in cluster shared-memory space; use only when targeting cluster-capable kernels and instructions.
+- Prefer `CTA` unless the copy intentionally uses cluster shared-memory addressing.
+
+### Invariant
+
+- `invariant` marks a global load as reading data that does not change for the relevant execution.
+- It applies only to `CopyG2ROp` atom construction.
+- Use `invariant=True` only when the loaded global memory value is known not to change for the relevant execution; otherwise leave it as `False`.
 
 ## Tiled Copy Construction
 
