@@ -20,6 +20,43 @@ import cutlass.cute as cute
 import cutlass.pipeline as pipeline
 ```
 
+## JIT and Runtime
+
+- Use `@cute.jit` for host-side JIT functions, launchers, and reusable compile-time helpers.
+- Use `@cute.kernel` for GPU kernel bodies. A `@cute.kernel` body cannot call another `@cute.kernel`.
+- JIT function arguments are dynamic by default; annotate compile-time values with `cutlass.Constexpr`.
+- Use type annotations for DSL objects passed into kernels when they clarify the ABI, such as `cute.Tensor`, `cute.CopyAtom`, `cute.MmaAtom`, `cute.TiledCopy`, and `cute.TiledMma`.
+- Use `kernel(...).launch(...)` from a `@cute.jit` launcher for normal kernel launches.
+- Use `cute.compile(...)` when an explicit compiled callable is needed, such as for inspecting generated artifacts or integrating with external launch paths.
+
+```python
+@cute.kernel
+def kernel(
+    tensor: cute.Tensor,
+    tile_m: cutlass.Constexpr,
+    tile_n: cutlass.Constexpr,
+):
+    ...
+
+@cute.jit
+def launch(
+    tensor: cute.Tensor,
+    tile_m: cutlass.Constexpr,
+    tile_n: cutlass.Constexpr,
+):
+    grid = (1, 1, 1)
+    block = (128, 1, 1)
+    kernel(tensor, tile_m, tile_n).launch(grid=grid, block=block)
+
+@cute.jit
+def compile_kernel(
+    tensor: cute.Tensor,
+    tile_m: cutlass.Constexpr,
+    tile_n: cutlass.Constexpr,
+):
+    return cute.compile(kernel, tensor, tile_m, tile_n)
+```
+
 ## Dtypes
 
 - Define operand and accumulator dtypes as separate variables: `a_dtype`, `b_dtype`, and `acc_dtype`.
