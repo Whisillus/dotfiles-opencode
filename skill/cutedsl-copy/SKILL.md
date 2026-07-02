@@ -63,6 +63,32 @@ copy_op = cute.nvgpu.cpasync.CopyG2SOp(cache_mode=cute.nvgpu.LoadCacheMode.GLOBA
 copy_atom = cute.make_copy_atom(copy_op, dtype, num_bits_per_copy=128)
 ```
 
+## cp.async Bulk Copy Op
+
+Use byte bulk cp.async ops for SM90+ bulk asynchronous copies that are not tensor-descriptor TMA atoms.
+
+- `cute.nvgpu.cpasync.CopyBulkG2SOp`: byte bulk GMEM -> SMEM copy.
+- `cute.nvgpu.cpasync.CopyBulkG2SMulticastOp`: byte bulk GMEM -> SMEM multicast copy.
+- `cute.nvgpu.cpasync.CopyBulkS2GOp`: byte bulk SMEM -> GMEM copy.
+- `cute.nvgpu.cpasync.CopyBulkS2GByteMaskOp`: byte bulk SMEM -> GMEM copy with a 16-bit byte mask; SM100+.
+- `cute.nvgpu.cpasync.CopyBulkS2SOp`: byte bulk CTA SMEM -> cluster SMEM copy.
+- `cute.nvgpu.cpasync.CopyDsmemStoreOp`: asynchronous RMEM -> DSMEM store.
+- These ops take no op constructor inputs.
+
+```python
+copy_op = cute.nvgpu.cpasync.CopyBulkG2SOp()
+copy_atom = cute.make_copy_atom(copy_op, dtype, num_bits_per_copy=0)
+
+copy_op = cute.nvgpu.cpasync.CopyBulkS2GOp()
+copy_atom = cute.make_copy_atom(copy_op, dtype, num_bits_per_copy=0)
+
+copy_op = cute.nvgpu.cpasync.CopyBulkS2SOp()
+copy_atom = cute.make_copy_atom(copy_op, dtype, num_bits_per_copy=0)
+
+copy_op = cute.nvgpu.cpasync.CopyDsmemStoreOp()
+copy_atom = cute.make_copy_atom(copy_op, dtype, num_bits_per_copy=0)
+```
+
 ## TMA Op
 
 Use TMA copy ops for descriptor-based bulk tensor copies between GMEM and SMEM.
@@ -253,6 +279,8 @@ Op-specific `cute.make_copy_atom(...)` kwargs for copy ops in this skill:
 - `CopyS2ROp`: `num_bits_per_copy=0`, `memory_order=MemoryOrder.WEAK`, `memory_scope=MemoryScope.CTA`, `shared_space=SharedSpace.CTA`; rejects other kwargs.
 - `CopyR2SOp`: `num_bits_per_copy=0`, `memory_order=MemoryOrder.WEAK`, `memory_scope=MemoryScope.CTA`, `shared_space=SharedSpace.CTA`; rejects other kwargs.
 - `cpasync.CopyG2SOp`: requires positive `num_bits_per_copy`; no `memory_order` or `memory_scope`.
+- `cpasync.CopyBulkG2SOp`, `cpasync.CopyBulkG2SMulticastOp`, `cpasync.CopyBulkS2GOp`, `cpasync.CopyBulkS2GByteMaskOp`, and `cpasync.CopyBulkS2SOp`: `num_bits_per_copy=0`; non-negative `int`.
+- `cpasync.CopyDsmemStoreOp`: `num_bits_per_copy=0`; valid values are `0`, `32`, `64`, and `128`.
 - Warp Matrix Copy ops: no op-specific atom kwargs beyond `copy_internal_type`; `transpose`, `num_matrices`, and `unpack_bits` are op constructor inputs.
 
 ```python
