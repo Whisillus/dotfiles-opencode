@@ -94,3 +94,38 @@ layout = cute.make_layout(shape, stride=stride)
 ```python
 tile = tensor[(None, rest_coord)]
 ```
+
+## Debug
+
+- Use Python `print(...)` for compile-time/static information such as layouts and shapes known during JIT tracing.
+- Use `cute.printf(...)` for runtime GPU-side diagnostics; remove it from performance paths after debugging.
+- Use `CUTE_DSL_LINEINFO=1` or `GenerateLineInfo` when correlating generated code with Python source.
+- Use `CUTE_DSL_KEEP=ir`, `ir-debug`, `ptx`, `cubin`, `llvm`, or `all` to dump generated artifacts.
+- Use `CUTE_DSL_PRINT_IR=1` to print generated IR without writing files.
+- Use `CUTE_DSL_DUMP_DIR` to redirect dumped artifacts to a known directory.
+- Compiled callables can expose generated artifacts such as `__ptx__`, `__cubin__`, and `__mlir__`.
+- Use `compute-sanitizer python ...` for memory/race debugging when a kernel produces invalid results or faults.
+
+```python
+@cute.jit
+def compile_for_debug(
+    tensor: cute.Tensor,
+    tile_m: cutlass.Constexpr,
+    tile_n: cutlass.Constexpr,
+):
+    print("tensor layout:", tensor.layout)
+    kernel.set_name_prefix("debug_kernel")
+
+    debug_options = (
+        cute.OptLevel(1),
+        cute.EnableAssertions,
+        cute.GenerateLineInfo,
+        cute.KeepPTX,
+        cute.KeepCUBIN,
+    )
+    compiled = cute.compile[debug_options](kernel, tensor, tile_m, tile_n)
+
+    print(compiled.__mlir__)
+    print(compiled.__ptx__)
+    return compiled
+```
