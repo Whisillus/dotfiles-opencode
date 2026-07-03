@@ -1,6 +1,6 @@
 ---
 name: cutedsl-basic
-description: Use whenever writing, reviewing, or debugging CuTe DSL code; covers default imports, JIT/runtime, dtypes, terminology, tensor access, debug workflow, and routing to related CuTe DSL skills.
+description: Use whenever writing, reviewing, or debugging CuTe DSL code; covers default imports, JIT/runtime, control flow, dtypes, terminology, tensor access, predication, shared storage, arch wrappers, debug workflow, and routing to related CuTe DSL skills.
 ---
 
 # CuTe DSL Basic
@@ -63,6 +63,32 @@ def compile_kernel(
     return cute.compile(kernel, tensor, tile_m, tile_n)
 ```
 
+## Control Flow
+
+- Use `cutlass.range(...)` for loops that should lower to dynamic device IR; bounds can be Python integers or DSL integer values.
+- Use `cutlass.range_constexpr(...)` for loops that should execute at JIT trace time with compile-time bounds.
+- Use `cutlass.const_expr(expr)` only when a branch condition must be a Python compile-time value; remove `const_expr(...)` when a dynamic branch should be emitted.
+- Dynamic `if`, `for`, and `while` regions must preserve value type and structure across region boundaries. Do not change a variable from one dtype, tuple structure, or object shape to another inside dynamic control flow.
+- Loop attributes such as `unroll`, `unroll_full`, and `prefetch_stages` must be Python compile-time values.
+- Use `cutlass.Constexpr` for tile sizes, layout choices, dtype/config flags, and loop attributes that must be known while tracing.
+- Avoid deprecated `cutlass.range_dynamic(...)` and `cutlass.dynamic_expr(...)` in new code.
+
+```python
+for k_tile in cutlass.range(0, k_tiles, 1, unroll=4):
+    ...
+
+for stage in cutlass.range_constexpr(num_stages):
+    ...
+
+if cutlass.const_expr(use_tma):
+    ...
+else:
+    ...
+
+while remaining > 0:
+    ...
+```
+
 ## Dtypes
 
 - Define operand and accumulator dtypes as separate variables: `a_dtype`, `b_dtype`, and `acc_dtype`.
@@ -87,6 +113,71 @@ acc_dtype = ...
 
 ```python
 tile = tensor[(None, rest_coord)]
+```
+
+## Predication
+
+- Build ragged-tile predicates from coordinates, not from ad hoc boundary arithmetic detached from the tiled tensors.
+- Use `cute.make_identity_tensor(shape)` to carry logical coordinates through the same tiling and partitioning path as the data.
+- Use `cute.elem_less(coord, limit_shape)` for coordinate-wise in-bounds checks.
+- For Tensor loads/stores, use the `mask=` and `pass_thru=` arguments documented in `cutedsl-tensor`.
+- For tiled copies, pass a predicate tensor with `cute.copy(copy_atom, src, dst, pred=pred_tensor)`; keep the predicate layout compatible with the partitioned source and destination tensors.
+- Keep dynamic predicates as DSL Boolean or TensorSSA values. Do not force them through Python `bool(...)` or `cutlass.const_expr(...)`.
+
+```python
+coord_tensor = cute.make_identity_tensor(problem_shape)
+coord_tile = cute.local_tile(coord_tensor, tile_shape, tile_coord)
+
+coord = coord_tile[(m, n)]
+valid = cute.elem_less(coord, problem_shape)
+```
+
+## Shared Storage And Structs
+
+- Use `cutlass.utils.SmemAllocator()` inside kernels when allocating shared-memory storage.
+- `SmemAllocator` computes the kernel shared-memory usage; do not manually pass a dynamic shared-memory byte count unless the surrounding launch path explicitly requires it.
+- `SmemAllocator.allocate_tensor(dtype, layout, byte_alignment=..., swizzle=...)` returns a shared-memory `cute.Tensor`; the layout must be static.
+- Use `@cute.struct` for named shared-storage aggregates.
+- Struct fields should be DSL scalar types, `cute.struct.MemRange[dtype, size]`, nested `@cute.struct` types, or `cute.struct.Align[T, alignment]` wrappers.
+- Use `cute.struct.Align[...]` for fields that need explicit alignment, especially shared-memory buffers used by vectorized copies, MMA, or TMA paths.
+- Use `MemRange.get_tensor(layout, dtype=None, swizzle=None)` to turn a struct buffer field into a tensor view.
+- Assign scalar struct fields directly with `storage.field = value`; use `storage.field.ptr` only when a pointer is needed.
+
+```python
+@cute.struct
+class SharedStorage:
+    smem: cute.struct.Align[
+        cute.struct.MemRange[cutlass.Float32, smem_elems],
+        16,
+    ]
+    flag: cutlass.Int32
+
+allocator = cutlass.utils.SmemAllocator()
+storage = allocator.allocate(SharedStorage, byte_alignment=16)
+
+smem_tensor = storage.smem.get_tensor(smem_layout)
+storage.flag = 0
+```
+
+## Arch Wrappers
+
+- Use `cute.arch.thread_idx()`, `block_idx()`, `block_dim()`, and `grid_dim()` for CTA and grid indexing.
+- Use `cute.arch.lane_idx()` and `cute.arch.warp_idx()` for warp-local control and partitioning.
+- Use `cute.arch.WARP_SIZE` instead of spelling `32` when the code depends on warp width.
+- Use `cute.arch.sync_threads()` for CTA-wide synchronization and `cute.arch.sync_warp(mask)` for warp synchronization.
+- Use `cute.arch.barrier(...)` and `cute.arch.barrier_arrive(...)` only for named CTA barrier patterns where the participating thread count and divergence behavior are explicit.
+- Use `pipeline` APIs for staged producer/consumer synchronization and the CUDA synchronization skills for low-level memory-order reasoning.
+
+```python
+tid_x, tid_y, tid_z = cute.arch.thread_idx()
+bid_x, bid_y, bid_z = cute.arch.block_idx()
+lane = cute.arch.lane_idx()
+warp = cute.arch.warp_idx()
+
+if lane < 16:
+    ...
+
+cute.arch.sync_threads()
 ```
 
 ## Debug
