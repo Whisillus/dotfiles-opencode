@@ -7,13 +7,6 @@ description: Use when the user asks about CuTe DSL cutlass.pipeline, PipelineAsy
 
 Use this skill for CuTe DSL pipeline APIs and producer/consumer protocols.
 
-## Imports And Core Types
-
-- Use the default CuTe DSL imports from `cutedsl-basic`: `import cutlass`, `import cutlass.cute as cute`, and `import cutlass.pipeline as pipeline`.
-- Use `pipeline.Agent` to describe the participant granularity.
-- Use `pipeline.CooperativeGroup(agent, size)` to describe how many agents participate.
-- Use `pipeline.PipelineState` or `pipeline.make_pipeline_state(...)` to track circular-buffer index and phase.
-- Use the pipeline class that matches the data movement path.
 
 ## Pipeline Class
 

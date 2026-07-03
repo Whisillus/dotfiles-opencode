@@ -1,12 +1,17 @@
 ---
 name: cutedsl-basic
-description: Use when the user asks about CuTe DSL basics, cutlass.cute, cute.jit, cute.kernel, cute.arch, cute.nvgpu, layouts, tensors, atoms, or basic CuTe DSL skill-writing notes.
+description: Use whenever writing, reviewing, or debugging CuTe DSL code; covers default imports, JIT/runtime, dtypes, terminology, tensor access, debug workflow, and routing to related CuTe DSL skills.
 ---
 
 # CuTe DSL Basic
 
 ## Related Skills
 
+- Treat this as the entry-point skill for CuTe DSL coding tasks; load it before applying more specialized CuTe DSL skills.
+- Also use `cutedsl-layout` when the task involves layouts, tensors, layout algebra, tensor tiling, local partitioning, or thread-value layouts.
+- Also use `cutedsl-copy` when the task involves copy operation descriptors, copy atoms, tiled copies, TMA copy setup, bulk copy, or warp matrix copy.
+- Also use `cutedsl-mma` when the task involves MMA ops/atoms, tiled MMA, GEMM mainloops, WMMA, or WGMMA.
+- Also use `cutedsl-pipeline` when the task involves `cutlass.pipeline`, staged producer/consumer protocols, pipeline state, mbarriers, `cp.async` pipelines, or TMA pipelines.
 - Also use the CUDA skills when the question involves CUDA architecture, PTX, synchronization, memory ordering, tensor cores, TMA, WGMMA, or other low-level GPU semantics.
 
 ## Imports
@@ -74,18 +79,6 @@ acc_dtype = ...
 - Do not use row-major or column-major terminology when discussing CuTe DSL major modes.
 - Prefer `cute.nvgpu.OperandMajorMode.MN` and `cute.nvgpu.OperandMajorMode.K` for operands.
 - Prefer `cute.nvgpu.OutputMajorMode.M` and `cute.nvgpu.OutputMajorMode.N` for outputs when an output-major enum is needed.
-
-## Layout Construction
-
-- When using `cute.make_layout`, always provide both `shape` and `stride`; do not rely on the default stride.
-- Define `shape` and `stride` as separate values before constructing the layout.
-- Use `cute.make_layout(shape, stride=stride)` because `stride` is a keyword-only argument.
-
-```python
-shape = ...
-stride = ...
-layout = cute.make_layout(shape, stride=stride)
-```
 
 ## Tensor Access
 
