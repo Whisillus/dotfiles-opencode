@@ -1,6 +1,6 @@
 ---
 name: cutedsl-basic
-description: Use whenever writing, reviewing, or debugging CuTe DSL code; covers default imports, JIT/runtime, control flow, dtypes, terminology, tensor access, predication, shared storage, arch wrappers, debug workflow, and routing to related CuTe DSL skills.
+description: Use whenever writing, reviewing, or debugging CuTe DSL code; covers default imports, JIT/runtime, control flow, dtypes, terminology, tensor access, predication, cute.elem_less, shared storage, arch wrappers, debug workflow, and routing to related CuTe DSL skills.
 ---
 
 # CuTe DSL Basic
@@ -115,11 +115,13 @@ acc_dtype = ...
 tile = tensor[(None, rest_coord)]
 ```
 
-## Predication
+## Predication And Comparisons
 
 - Build ragged-tile predicates from coordinates, not from ad hoc boundary arithmetic detached from the tiled tensors.
 - Use `cute.make_identity_tensor(shape)` to carry logical coordinates through the same tiling and partitioning path as the data.
 - Use `cute.elem_less(coord, limit_shape)` for coordinate-wise in-bounds checks.
+- `cute.elem_less(lhs, rhs)` compares coordinates or shapes component by component and returns true only when every component of `lhs` is strictly less than the corresponding component of `rhs`.
+- Use `cute.elem_less(coord, problem_shape)` as the normal ragged-tile in-bounds predicate.
 - For Tensor loads/stores, use the `mask=` and `pass_thru=` arguments documented in `cutedsl-tensor`.
 - For tiled copies, pass a predicate tensor with `cute.copy(copy_atom, src, dst, pred=pred_tensor)`; keep the predicate layout compatible with the partitioned source and destination tensors.
 - Keep dynamic predicates as DSL Boolean or TensorSSA values. Do not force them through Python `bool(...)` or `cutlass.const_expr(...)`.
@@ -130,6 +132,16 @@ coord_tile = cute.local_tile(coord_tensor, tile_shape, tile_coord)
 
 coord = coord_tile[(m, n)]
 valid = cute.elem_less(coord, problem_shape)
+```
+
+```python
+coord_tensor = cute.make_identity_tensor(problem_shape)
+coord_tile = cute.local_tile(coord_tensor, tile_shape, tile_coord)
+data_tile = cute.local_tile(data_tensor, tile_shape, tile_coord)
+
+coord = coord_tile[(m, n)]
+mask = cute.elem_less(coord, problem_shape)
+value = data_tile[(m, n)]
 ```
 
 ## Shared Storage And Structs
