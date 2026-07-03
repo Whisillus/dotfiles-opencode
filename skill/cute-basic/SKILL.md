@@ -12,7 +12,7 @@ description: Use whenever writing, reviewing, or debugging C++ CuTe code; covers
 - Also use `cute-layout` when the task involves `cute::Layout`, shapes, strides, layout algebra, `local_tile`, `local_partition`, `composition`, or tilers.
 - Also use `cute-copy` when the task involves `cute::copy`, `copy_if`, `Copy_Atom`, `TiledCopy`, `ThrCopy`, `cp.async`, LDSM, or TMA copy setup.
 - Also use `cute-mma` when the task involves `MMA_Atom`, `TiledMMA`, `ThrMMA`, `cute::gemm`, MMA fragments, WMMA, WGMMA, or MMA instruction shapes.
-- Also use `cute-pipeline` when the task involves C++ CUTLASS pipeline classes such as `cutlass::PipelineAsync`, `PipelineTmaAsync`, `PipelineTmaStore`, `PipelineState`, mbarrier-backed producer/consumer protocols, or SM90/SM100 pipeline usage.
+- Also use `cute-pipeline` when the task involves C++ CUTLASS pipeline classes such as `cutlass::PipelineAsync`, `PipelineTmaAsync`, `PipelineTmaStore`, `PipelineState`, mbarrier-backed producer/consumer protocols, or SM90 pipeline usage.
 - Also use the CUDA skills when the question involves CUDA architecture, PTX, synchronization, memory ordering, tensor cores, TMA, WGMMA, or other low-level GPU semantics.
 
 ## Headers And Namespaces
