@@ -30,20 +30,22 @@ using namespace cute;
 
 ## Static Values And Type Checks
 
-- Use CuTe static integers such as `Int<128>{}` or `_128` when a tile shape, thread layout, or pipeline stage count should be compile-time information.
+- Use CuTe static integer aliases such as `_1`, `_2`, and `_128` instead of `Int<N>` when an alias exists.
+- In value positions, instantiate aliases with braces, for example `_128{}`; in type positions, write the alias directly, for example `Shape<_128,_64>`.
+- If a grouped type or value contains a static integer with no alias or an expression-based value, use `Int<Val>` consistently across that group, for example `Shape<Int<1>, Int<33>>` instead of `Shape<_1, Int<33>>`.
 - Use ordinary C++ integers for runtime problem sizes and leading dimensions.
 - Use `make_shape(...)`, `make_stride(...)`, and `make_coord(...)` for shape, stride, and coordinate values.
 - Use `_` to keep a tensor mode when slicing, and use `X` in `Step<...>` projections to drop a mode from a projected tiler or coordinate.
-- Use `CUTE_STATIC_ASSERT_V(...)` for CuTe value/type predicates such as `rank(...) == Int<3>{}` or `congruent(shape, stride)`.
+- Use `CUTE_STATIC_ASSERT_V(...)` for CuTe value/type predicates such as `rank(...) == _3{}` or `congruent(shape, stride)`.
 - Use `static_assert(is_static<T>::value)` when a layout or object must be fully static, such as a shared-memory layout used for static allocation.
 - Use `CUTE_UNROLL` for small static loops that should be unrolled in kernels.
 
 ```c++
 auto problem_shape = make_shape(M, N, K);
-auto cta_tiler = make_shape(Int<128>{}, Int<128>{}, Int<32>{});
+auto cta_tiler = make_shape(_128{}, _128{}, _32{});
 auto cta_coord = make_coord(blockIdx.x, blockIdx.y, _);
 
-CUTE_STATIC_ASSERT_V(rank(problem_shape) == Int<3>{});
+CUTE_STATIC_ASSERT_V(rank(problem_shape) == _3{});
 CUTE_STATIC_ASSERT_V(congruent(select<0,2>(problem_shape), stride_A));
 ```
 
