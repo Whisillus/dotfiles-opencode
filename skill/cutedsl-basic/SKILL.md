@@ -8,7 +8,8 @@ description: Use whenever writing, reviewing, or debugging CuTe DSL code; covers
 ## Related Skills
 
 - Treat this as the entry-point skill for CuTe DSL coding tasks; load it before applying more specialized CuTe DSL skills.
-- Also use `cutedsl-layout` when the task involves layouts, tensors, layout algebra, tensor tiling, local partitioning, or thread-value layouts.
+- Also use `cutedsl-tensor` when the task involves tensor construction, register tensors, fragments, tensor views, TensorSSA helpers, tensor reinterpretation, or tensor printing.
+- Also use `cutedsl-layout` when the task involves layouts, layout algebra, tensor tiling, local partitioning, or thread-value layouts.
 - Also use `cutedsl-copy` when the task involves copy operation descriptors, copy atoms, tiled copies, TMA copy setup, bulk copy, or warp matrix copy.
 - Also use `cutedsl-mma` when the task involves MMA ops/atoms, tiled MMA, GEMM mainloops, WMMA, or WGMMA.
 - Also use `cutedsl-pipeline` when the task involves `cutlass.pipeline`, staged producer/consumer protocols, pipeline state, mbarriers, `cp.async` pipelines, or TMA pipelines.
