@@ -47,12 +47,15 @@ auto stage = write_state.index();
 
 - Allocate pipeline shared storage in the kernel's shared storage struct when the selected pipeline class requires it.
 - Fill the pipeline `Params` object explicitly; arrive counts must match the actual participating producer and consumer threads.
+- For `PipelineAsync` and `PipelineTransactionAsync`, set `params.role` for each participant path before calling producer or consumer APIs.
+- For `PipelineTmaAsync`, set `params.role`, `params.is_leader`, `params.num_consumers`, `params.num_producers`, and `params.transaction_bytes`; the leader arms the transaction barrier during producer acquire.
 - Construct pipeline objects after shared storage is available and before producer/consumer protocol use.
 - For cluster or TMA pipelines, follow local examples for cluster shape, barrier initialization, and synchronization.
 - A mismatch between `producer_arv_count`, `consumer_arv_count`, elected producer threads, and guarded code paths can hang the kernel.
 
 ```c++
 typename MainloopPipeline::Params params;
+params.role = MainloopPipeline::ThreadCategory::ProducerConsumer;
 params.producer_arv_count = 1;
 params.consumer_arv_count = 128;
 
@@ -90,19 +93,23 @@ pipeline.consumer_release(read_state);
 
 - Set `PipelineTmaAsync::Params::transaction_bytes` to the total bytes expected to arrive at each stage's transaction barrier.
 - `PipelineTmaAsync::producer_acquire(...)` arms the stage transaction barrier with `params.transaction_bytes`; do not add a separate `producer_expect_transaction(...)` call in normal `PipelineTmaAsync` code.
-- The producer-side stage operation completes the transaction barrier. Keep the `PipelineTmaAsync::producer_commit(...)` call in the producer protocol even though normal TMA mainloops treat it as a no-op rather than the completion signal.
+- In current C++ CUTLASS, `PipelineTmaAsync::producer_commit(state, bytes)` exists for unit-test simulation of TMA completion; normal TMA mainloops should pass the pipeline barrier pointer to the TMA operation and treat producer commit as a protocol placeholder when local code uses it.
 - Use one elected producer thread or the exact producer group expected by the TMA path; all participants must still follow the pipeline protocol expected by the kernel.
 - Keep TMA barrier initialization, cluster synchronization, producer completion, consumer wait, WGMMA use, and release ordering consistent with local SM90 examples.
 - Keep this section limited to barrier, state, and producer/consumer protocol around staged resources.
 
 ```c++
 typename MainloopPipeline::Params params;
+params.role = MainloopPipeline::ThreadCategory::Producer;
+params.is_leader = elected_tma_producer;
+params.num_consumers = NumConsumerThreads;
+params.num_producers = NumProducerThreads;
 params.transaction_bytes = transaction_bytes;
 
 MainloopPipeline pipeline(shared_storage.pipeline_storage, params, cluster_shape);
 
 pipeline.producer_acquire(write_state);
-// issue producer-side stage operation
+// issue TMA with pipeline.producer_get_barrier(write_state)
 pipeline.producer_commit(write_state, transaction_bytes);
 ++write_state;
 ```

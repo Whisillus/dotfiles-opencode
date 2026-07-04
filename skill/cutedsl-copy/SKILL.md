@@ -43,6 +43,7 @@ Use `cute.nvgpu.cpasync.CopyG2SOp` for non-bulk asynchronous global-to-shared co
 - Pass only `num_bits_per_copy` when creating the copy atom; do not pass `memory_order` or `memory_scope` for non-bulk `cp.async`.
 - Use `cute.arch.cp_async_commit_group()` to commit issued `cp.async` copies.
 - Use `cute.arch.cp_async_wait_group(n)` to wait until at most `n` committed groups remain in flight; use `cute.arch.cp_async_wait_group(0)` before consuming the copied SMEM data.
+- Follow the wait with the CTA, warp, or pipeline synchronization needed by the consumers before they read SMEM through ordinary loads.
 
 Op inputs:
 
@@ -405,4 +406,66 @@ tiled_copy = cute.make_tiled_copy_tv(copy_atom, thr_layout, val_layout)  # tile:
 copy_op = cute.nvgpu.CopyUniversalOp()           # plain assignment-style copy op
 copy_atom = cute.make_copy_atom(copy_op, dtype)  # copy atom over dtype values
 tiled_copy = cute.make_tiled_copy_A(copy_atom, tiled_mma)  # TV layout matches tiled_mma A
+```
+
+## Thread Copy Slices
+
+- Use `tiled_copy.get_slice(tidx)` to get the current thread's `ThrCopy`.
+- Use `thr_copy.partition_S(src)` and `thr_copy.partition_D(dst)` to create source and destination partitions for that thread.
+- Use `tiled_copy.retile(tensor)` or `thr_copy.retile(tensor)` when a copy path must view an existing tensor through the tiled copy's TV layout.
+- For tiled-copy flows, issue the copy with the copy atom and the partitioned tensors returned by the thread slice.
+- Keep partition shape comments in copy-value and tiled-mode form, for example `(CPY, CPY_M, CPY_N)`.
+
+```python
+tidx, _, _ = cute.arch.thread_idx()
+
+thr_copy = tiled_copy.get_slice(tidx)
+
+tS = thr_copy.partition_S(tile_S)  # (CPY, CPY_M, CPY_N)
+tD = thr_copy.partition_D(tile_D)  # (CPY, CPY_M, CPY_N)
+
+cute.copy(copy_atom, tS, tD)
+```
+
+## Predicated Tiled Copy
+
+- Build predicate tensors from identity or coordinate tensors tiled and partitioned through the same path as the data.
+- Partition the coordinate or predicate tensor with the same `ThrCopy` slice used for the guarded data tensor.
+- Store predicates in a register-memory Boolean tensor with the same shape as the partitioned copy tensors.
+- Pass the predicate with `pred=pred_tensor` to `cute.copy(...)`.
+- Use stride-0 predicate layouts only when intentionally broadcasting a predicate across a mode.
+
+```python
+coord_tensor = cute.make_identity_tensor(problem_shape)
+
+coord_tile = cute.local_tile(coord_tensor, tile_shape, tile_coord)
+src_tile = cute.local_tile(src_tensor, tile_shape, tile_coord)
+dst_tile = cute.local_tile(dst_tensor, tile_shape, tile_coord)
+
+thr_copy = tiled_copy.get_slice(tidx)
+tC = thr_copy.partition_S(coord_tile)
+tS = thr_copy.partition_S(src_tile)
+tD = thr_copy.partition_D(dst_tile)
+
+pred = cute.make_rmem_tensor(tC.shape, cutlass.Boolean)
+for i in cutlass.range_constexpr(cute.size(pred)):
+    pred[i] = cute.elem_less(tC[i], problem_shape)
+
+cute.copy(copy_atom, tS, tD, pred=pred)
+```
+
+## Copy Usage Notes
+
+- Use `cute.copy(copy_atom, src, dst)` for explicit copy atoms and already-partitioned tiled-copy tensors.
+- Use `cute.copy(copy_atom, src, dst, pred=pred)` for predicated explicit copies.
+- Use `cute.autovec_copy(src, dst)` only when the local code intentionally delegates vector width selection to CuTe DSL.
+- If a copy writes shared memory cooperatively, synchronize before consumers read it. For non-bulk `cp.async`, commit the group, wait for the needed number of groups, then perform the consumer-visible synchronization.
+
+```python
+cute.copy(copy_atom, tS, tD)
+cute.copy(copy_atom, tS, tD, pred=pred)
+
+cute.arch.cp_async_commit_group()
+cute.arch.cp_async_wait_group(0)
+cute.arch.sync_threads()
 ```

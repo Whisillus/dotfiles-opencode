@@ -155,3 +155,61 @@ atom_layout_mnk = cute.make_layout(atom_shape_mnk, stride=atom_stride_mnk)  # sh
 
 tiled_mma = cute.make_tiled_mma(mma_atom, atom_layout_mnk)  # tiled MMA shape: (16, 16, 1)
 ```
+
+### Thread MMA And Partitions
+
+- Use `tiled_mma.get_slice(tidx)` to get the current thread's `ThrMma`.
+- Use `thr_mma.partition_A(tensor)`, `partition_B(tensor)`, and `partition_C(tensor)` to create operand and accumulator partitions.
+- Use `tiled_mma.make_fragment_A(...)`, `make_fragment_B(...)`, and `make_fragment_C(...)` to allocate or view fragments shaped for the tiled MMA.
+- Prefer building accumulator and temporary fragment shapes from already partitioned tensors.
+- When a tensor carries extra K-tile or pipeline-stage modes, pass the per-K or per-stage slice consumed by one MMA issue to fragment construction and `cute.gemm(...)`.
+- Keep partition comments in `(MMA, MMA_M, MMA_K)`, `(MMA, MMA_N, MMA_K)`, and `(MMA, MMA_M, MMA_N)` form.
+
+```python
+tidx, _, _ = cute.arch.thread_idx()
+
+thr_mma = tiled_mma.get_slice(tidx)
+
+tCsA = thr_mma.partition_A(sA)  # (MMA, MMA_M, MMA_K, ...)
+tCsB = thr_mma.partition_B(sB)  # (MMA, MMA_N, MMA_K, ...)
+tCgC = thr_mma.partition_C(gC)  # (MMA, MMA_M, MMA_N)
+
+tCrA = tiled_mma.make_fragment_A(tCsA)
+tCrB = tiled_mma.make_fragment_B(tCsB)
+tCrC = tiled_mma.make_fragment_C(tCgC)
+tCrC.fill(0.0)
+```
+
+### Retiling With Copy
+
+- Use `cute.make_tiled_copy_A(copy_atom, tiled_mma)` and `cute.make_tiled_copy_B(copy_atom, tiled_mma)` when a copy path must match the tiled MMA operand layout.
+- Retile copy destinations into existing MMA fragments with `ThrCopy.retile(...)` for shared-to-register paths.
+- Verify the tiled copy and tiled MMA are built for the same logical thread count when they are expected to cooperate on one operand path.
+
+```python
+s2r_copy_a = cute.make_tiled_copy_A(s2r_atom_a, tiled_mma)
+s2r_thr_copy_a = s2r_copy_a.get_slice(tidx)
+
+tXsA = s2r_thr_copy_a.partition_S(sA)  # source SMEM A partition for this thread
+tXrA = s2r_thr_copy_a.retile(tCrA)     # destination view retiled like the MMA A fragment
+```
+
+## MMA Algorithms
+
+- Use `cute.gemm(tiled_mma, acc, A, B, acc)` for tiled MMA execution.
+- CuTe GEMM operand convention is A `(M,K)`, B `(N,K)`, C `(M,N)`.
+- K appears in the second mode of both A and B; do not rewrite B as `(K,N)` in CuTe DSL code.
+- Loop over the K tile or K block mode outside `cute.gemm(...)` when the partitioned operand tensors still carry an explicit K tile dimension.
+- For WGMMA, keep the `cute.gemm(...)` issue warpgroup-uniform and pair it with the WGMMA commit/wait protocol above.
+
+```python
+num_k_blocks = cute.size(tCrA, mode=[2])
+for k_block in cutlass.range_constexpr(num_k_blocks):
+    cute.gemm(
+        tiled_mma,
+        tCrC,
+        tCrA[(None, None, k_block)],
+        tCrB[(None, None, k_block)],
+        tCrC,
+    )
+```

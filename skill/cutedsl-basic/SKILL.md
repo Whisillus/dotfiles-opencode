@@ -123,7 +123,7 @@ tile = tensor[(None, rest_coord)]
 - `cute.elem_less(lhs, rhs)` compares coordinates or shapes component by component and returns true only when every component of `lhs` is strictly less than the corresponding component of `rhs`.
 - Use `cute.elem_less(coord, problem_shape)` as the normal ragged-tile in-bounds predicate.
 - For Tensor loads/stores, use the `mask=` and `pass_thru=` arguments documented in `cutedsl-tensor`.
-- For tiled copies, pass a predicate tensor with `cute.copy(copy_atom, src, dst, pred=pred_tensor)`; keep the predicate layout compatible with the partitioned source and destination tensors.
+- For copy-atom and tiled-copy partitioned flows, pass a predicate tensor with `cute.copy(copy_atom, src, dst, pred=pred_tensor)`; keep the predicate layout compatible with the partitioned source and destination tensors.
 - Keep dynamic predicates as DSL Boolean or TensorSSA values. Do not force them through Python `bool(...)` or `cutlass.const_expr(...)`.
 
 ```python
