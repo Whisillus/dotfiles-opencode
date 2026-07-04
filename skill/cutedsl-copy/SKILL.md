@@ -392,17 +392,17 @@ copy_atom = cute.make_copy_atom(
 - For MMA operand retiling, use `cute.make_tiled_copy_A(copy_atom, tiled_mma)` or `cute.make_tiled_copy_B(copy_atom, tiled_mma)` after atom construction.
 
 ```python
-copy_op = ...
-copy_atom = cute.make_copy_atom(copy_op, dtype)
+copy_op = cute.nvgpu.CopyUniversalOp()              # plain assignment-style copy op
+copy_atom = cute.make_copy_atom(copy_op, dtype)     # copy atom over dtype values
 
-thr_layout = ...
-val_layout = ...
-tiler_mn, layout_tv = cute.make_layout_tv(thr_layout, val_layout)
-tiled_copy = cute.make_tiled_copy_tv(copy_atom, thr_layout, val_layout)
+thr_layout = cute.make_layout((2, 3), stride=(3, 1))  # shape: (2, 3), 6 thread slots
+val_layout = cute.make_layout((2, 2), stride=(2, 1))  # shape: (2, 2), 4 values per thread
+tiler_mn, layout_tv = cute.make_layout_tv(thr_layout, val_layout)  # tiler_mn: (4, 6), TV shape: ((3, 2), (2, 2))
+tiled_copy = cute.make_tiled_copy_tv(copy_atom, thr_layout, val_layout)  # tile: (4, 6), TV layout matches layout_tv
 ```
 
 ```python
-copy_op = ...
-copy_atom = cute.make_copy_atom(copy_op, dtype)
-tiled_copy = cute.make_tiled_copy_A(copy_atom, tiled_mma)
+copy_op = cute.nvgpu.CopyUniversalOp()           # plain assignment-style copy op
+copy_atom = cute.make_copy_atom(copy_op, dtype)  # copy atom over dtype values
+tiled_copy = cute.make_tiled_copy_A(copy_atom, tiled_mma)  # TV layout matches tiled_mma A
 ```

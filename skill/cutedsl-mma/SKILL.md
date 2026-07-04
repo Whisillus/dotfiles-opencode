@@ -71,9 +71,6 @@ Use `cute.nvgpu.warpgroup` MMA ops for asynchronous warpgroup-level MMA instruct
   - `MmaF16BF16Op` with `a_src = OperandSource.SMEM`: A and B may be `OperandMajorMode.K` or `OperandMajorMode.MN`.
   - `MmaF16BF16Op` with `a_src = OperandSource.RMEM`: keep A `OperandMajorMode.K`; B may be `OperandMajorMode.K` or `OperandMajorMode.MN`.
   - `MmaF8Op` and `MmaI8Op`: A and B must both be `OperandMajorMode.K`.
-- `cute.nvgpu.warpgroup.fence()` orders prior fragment/register setup before WGMMA issue.
-- `cute.nvgpu.warpgroup.commit_group()` publishes queued WGMMA instructions as an async completion group.
-- `cute.nvgpu.warpgroup.wait_group(n)` waits until at most `n` committed WGMMA groups remain in flight; use `wait_group(0)` before consuming final accumulators.
 
 Op inputs:
 
@@ -115,6 +112,22 @@ mma_op = cute.nvgpu.warpgroup.MmaF8Op(
 )
 ```
 
+## WGMMA Protocol
+
+- `cute.nvgpu.warpgroup.fence()` orders prior fragment/register setup before WGMMA issue.
+- `cute.nvgpu.warpgroup.commit_group()` publishes queued WGMMA instructions as an async completion group.
+- `cute.nvgpu.warpgroup.wait_group(n)` waits until at most `n` committed WGMMA groups remain in flight; use `wait_group(0)` before consuming final accumulators.
+- Issue WGMMA through `cute.gemm(...)` warpgroup-uniformly across the participating four contiguous warps.
+
+```python
+cute.nvgpu.warpgroup.fence()        # orders prior fragment/register writes before WGMMA reads
+cute.gemm(tiled_mma, acc, tCrA[tile_crd], tCrB[tile_crd], acc)  # queues WGMMA for tile_crd
+cute.nvgpu.warpgroup.commit_group() # commits queued WGMMA operations as one group
+cute.nvgpu.warpgroup.wait_group(1)  # waits until at most one committed group remains
+# ... pipeline continues ...
+cute.nvgpu.warpgroup.wait_group(0)  # waits until no committed WGMMA groups remain
+```
+
 ## MMA Atom
 
 - Treat the MMA operation descriptor as an op, not an atom.
@@ -133,9 +146,12 @@ mma_atom = cute.make_mma_atom(mma_op)
 - `permutation_mnk` is optional; define it separately only when needed, otherwise omit it.
 
 ```python
-atom_shape_mnk = ...
-atom_stride_mnk = ...
-atom_layout_mnk = cute.make_layout(atom_shape_mnk, stride=atom_stride_mnk)
+mma_op = cute.nvgpu.MmaUniversalOp(abacc_dtype)  # atom instruction shape: (1, 1, 1)
+mma_atom = cute.make_mma_atom(mma_op)            # MMA atom for the universal op
 
-tiled_mma = cute.make_tiled_mma(mma_atom, atom_layout_mnk)
+atom_shape_mnk = (16, 16, 1)                    # 16x16x1 atom replicas across M/N/K
+atom_stride_mnk = (16, 1, 1)                    # N-major atom layout, K singleton
+atom_layout_mnk = cute.make_layout(atom_shape_mnk, stride=atom_stride_mnk)  # shape: (16, 16, 1)
+
+tiled_mma = cute.make_tiled_mma(mma_atom, atom_layout_mnk)  # tiled MMA shape: (16, 16, 1)
 ```

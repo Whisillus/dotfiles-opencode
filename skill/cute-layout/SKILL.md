@@ -169,12 +169,13 @@ auto layout_zipped = zipped_divide(layout_target, tile_shape); // shape: ((_4,_8
 - Use `tiled_product(block, tiler)` when the tiler layout should remain explicit in the result.
 - Use `flat_product(block, tiler)` when the product should be flattened.
 - Use `blocked_product(block, tiler)` or `raked_product(block, tiler)` when that blocked or raked ordering is required by a thread/value mapping.
-- For `block` shape `(M, N, L, ...)` and tiler shape `(TileM, TileN)`, result mode structures are:
-  - `logical_product`: `((M, TileM), (N, TileN), L, ...)`
-  - `zipped_product`: `((M, N), (TileM, TileN, L, ...))`
-  - `tiled_product`: `((M, N), TileM, TileN, L, ...)`
-  - `flat_product`: `(M, N, TileM, TileN, L, ...)`
+- For a rank-2 block layout with shape `(M, N)` and a rank-2 tiler layout with shape `(TileM, TileN)`, common result mode structures are:
+  - `logical_product`: `((M, N), (TileM, TileN))`
+  - `zipped_product`: `((M, N), (TileM, TileN))`
+  - `tiled_product`: `((M, N), TileM, TileN)`
+  - `flat_product`: `(M, N, TileM, TileN)`
 - `blocked_product` and `raked_product` are rank-sensitive product variants that reassociate like modes after the product.
+- Prefer a layout tiler for layout-product examples; raw shape tilers have target-shape divisibility semantics.
 - `make_tiled_copy(...)` uses a raked-product style combination of thread and value layouts; make thread/value layouts explicit when copy ownership matters.
 
 ```c++
@@ -182,10 +183,10 @@ auto block_layout = make_layout(make_shape(_2{}, _3{}));
 auto tiler_shape = make_shape(_4{}, _5{});
 auto tiler_layout = make_layout(tiler_shape);
 
-auto logical = logical_product(block_layout, tiler_shape); // shape: ((_2,_4),(_3,_5))
-auto zipped = zipped_product(block_layout, tiler_shape);   // shape: ((_2,_3),(_4,_5))
-auto tiled = tiled_product(block_layout, tiler_shape);     // shape: ((_2,_3),_4,_5)
-auto flat = flat_product(block_layout, tiler_shape);       // shape: (_2,_3,_4,_5)
+auto logical = logical_product(block_layout, tiler_layout); // shape: ((_2,_3),(_4,_5))
+auto zipped = zipped_product(block_layout, tiler_layout);   // shape: ((_2,_3),(_4,_5))
+auto tiled = tiled_product(block_layout, tiler_layout);     // shape: ((_2,_3),_4,_5)
+auto flat = flat_product(block_layout, tiler_layout);       // shape: (_2,_3,_4,_5)
 auto blocked = blocked_product(block_layout, tiler_layout); // shape: ((_2,_4),(_3,_5))
 auto raked = raked_product(block_layout, tiler_layout);     // shape: ((_4,_2),(_5,_3))
 
@@ -198,6 +199,7 @@ auto tv_source = raked_product(thr_layout, val_layout);     // layout for thread
 ### Helper
 
 - Use `tile_to_shape(atom, target_shape, order)` to repeat or fit a layout atom to a target shape.
+- `tile_to_shape(...)` can preserve atom/rest hierarchy in the returned shape; do not assume `shape(result)` is the flat target shape.
 - Use `local_tile(tensor, tiler, coord, Step<...>{})` to extract one tiled tensor view; it is equivalent to a zipped divide followed by rest-coordinate selection.
 - Use `local_partition(tensor, thread_layout, thread_idx, Step<...>{})` to partition a tensor across a thread layout.
 - Use `inner_partition(...)` or `outer_partition(...)` directly only when the code needs that exact slice form; prefer `local_tile(...)` and `local_partition(...)` for common CTA and thread partitioning patterns.
@@ -206,7 +208,7 @@ auto tv_source = raked_product(thr_layout, val_layout);     // layout for thread
 
 ```c++
 auto atom = make_layout(make_shape(_2{}, _2{}), make_stride(_2{}, _1{}));
-auto tiled_layout = tile_to_shape(atom, make_shape(_4{}, _6{})); // shape: (_4,_6)
+auto tiled_layout = tile_to_shape(atom, make_shape(_4{}, _6{})); // shape: ((_2,_2),(_2,_3))
 
 Tensor tensor = make_tensor<float>(Shape<_8,_24>{});
 auto tile_shape = Shape<_4,_8>{};

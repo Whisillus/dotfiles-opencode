@@ -33,12 +33,14 @@ copy_if(tiled_copy, thr_pred, thr_src, thr_dst);
 
 ```c++
 Tensor coords = make_identity_tensor(shape(S));
-Tensor pred = cute::lazy::transform(coords, [&](auto c) {
-  return elem_less(c, shape(S));
-});
+Tensor tile_C = local_tile(coords, block_shape, block_coord);
+Tensor tC = thr_copy.partition_S(tile_C);
+Tensor tP = make_tensor<bool>(shape(tC));
 
-Tensor tile_P = local_tile(pred, block_shape, block_coord);
-Tensor tP = thr_copy.partition_S(tile_P);
+CUTE_UNROLL
+for (int i = 0; i < size(tP); ++i) {
+  tP(i) = elem_less(tC(i), shape(S));
+}
 
 copy_if(tiled_copy, tP, tS, tD);
 ```
@@ -181,13 +183,13 @@ Use tiled copy construction after choosing or constructing the copy atom.
 - Use `make_tiled_copy_S/D(copy_atom, existing_tiled_copy)` when a new atom must reuse an existing tiled copy's source or destination TV layout.
 
 ```c++
-using Atom = Copy_Atom<UniversalCopy<uint128_t>, half_t>;
+using Atom = Copy_Atom<UniversalCopy<uint128_t>, half_t>; // 128-bit access, logical half_t values
 
-Layout thr_layout = make_layout(make_shape(_32{}, _8{}));
-Layout val_layout = make_layout(make_shape(_4{}, _1{}));
+Layout thr_layout = make_layout(make_shape(_32{}, _8{})); // shape: (_32,_8), 256 thread slots
+Layout val_layout = make_layout(make_shape(_8{}, _1{}));  // shape: (_8,_1), 8 half_t values per thread
 
-TiledCopy tiled_copy = make_tiled_copy(Atom{}, thr_layout, val_layout);
-TiledCopy tiled_copy_A = make_tiled_copy_A(Atom{}, tiled_mma);
+TiledCopy tiled_copy = make_tiled_copy(Atom{}, thr_layout, val_layout); // tile: (_256,_8), TV shape: (_256,(_8,_1))
+TiledCopy tiled_copy_A = make_tiled_copy_A(Atom{}, tiled_mma);          // TV layout matches tiled_mma A
 ```
 
 ### Thread Copy Slices
@@ -197,12 +199,12 @@ TiledCopy tiled_copy_A = make_tiled_copy_A(Atom{}, tiled_mma);
 - Use `thr_copy.retile_S(tensor)` and `thr_copy.retile_D(tensor)` when retile views are needed, commonly for shared-to-register copy paths aligned to an MMA partition.
 
 ```c++
-ThrCopy thr_copy = tiled_copy.get_slice(threadIdx.x);
+ThrCopy thr_copy = tiled_copy.get_slice(threadIdx.x); // one thread's slice of tiled_copy
 
-Tensor tS = thr_copy.partition_S(tile_S);
-Tensor tD = thr_copy.partition_D(tile_D);
+Tensor tS = thr_copy.partition_S(tile_S); // source partition owned by this thread
+Tensor tD = thr_copy.partition_D(tile_D); // destination partition owned by this thread
 
-copy(tiled_copy, tS, tD);
+copy(tiled_copy, tS, tD); // issues the tiled copy over all thread/value partitions
 ```
 
 ## Operation-Specific Usage

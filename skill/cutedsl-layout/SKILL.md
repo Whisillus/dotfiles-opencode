@@ -79,7 +79,7 @@ mode_shape = cute.shape(layout, mode=0)   # (2, 3)
 storage_span = cute.cosize(layout)        # 28
 
 flat_layout = cute.flatten(layout)        # shape: (2, 3, 4)
-sliced_layout = cute.slice_(layout, (None, 1))   # shape: (2, 3)
+sliced_layout = cute.slice_(layout, ((None, None), 1))  # shape: (2, 3)
 
 plain_shape = (2, 3, 4)
 plain_stride = (12, 4, 1)
@@ -150,11 +150,11 @@ flat = cute.flat_divide(tensor, tile_shape)        # (4, 8, 2, 3)
 - Use `cute.tiled_product(block, tiler)` when the tiler layout should remain explicit in the result.
 - Use `cute.flat_product(block, tiler)` when the product should be flattened.
 - Use `cute.raked_product(block, tiler)` or `cute.blocked_product(block, tiler)` when a raked or blocked product layout is required by the surrounding algorithm.
-- For `block` shape `(M, N, L, ...)` and tiler shape `(TileM, TileN)`, the result mode structures are:
-  - `logical_product`: `((M, TileM), (N, TileN), L, ...)`
-  - `zipped_product`: `((M, N), (TileM, TileN, L, ...))`
-  - `tiled_product`: `((M, N), TileM, TileN, L, ...)`
-  - `flat_product`: `(M, N, TileM, TileN, L, ...)`
+- For a rank-2 block layout with shape `(M, N)` and a rank-2 tiler layout with shape `(TileM, TileN)`, common result mode structures are:
+  - `logical_product`: `((M, N), (TileM, TileN))`
+  - `zipped_product`: `((M, N), (TileM, TileN))`
+  - `tiled_product`: `((M, N), TileM, TileN)`
+  - `flat_product`: `(M, N, TileM, TileN)`
 - `blocked_product` and `raked_product` are rank-sensitive product variants that reassociate like modes after the product; use them only when that blocked or raked ordering is required.
 
 ```python
@@ -167,12 +167,12 @@ tiler_shape = (4, 5)
 tiler_stride = (5, 1)
 tiler_layout = cute.make_layout(tiler_shape, stride=tiler_stride)
 
-logical = cute.logical_product(block_layout, tiler_layout)  # ((2, 4), (3, 5))
+logical = cute.logical_product(block_layout, tiler_layout)  # ((2, 3), (4, 5))
 zipped = cute.zipped_product(block_layout, tiler_layout)    # ((2, 3), (4, 5))
 tiled = cute.tiled_product(block_layout, tiler_layout)      # ((2, 3), 4, 5)
 flat = cute.flat_product(block_layout, tiler_layout)        # (2, 3, 4, 5)
-blocked = cute.blocked_product(block_layout, tiler_layout)  # shape: (8, 15)
-raked = cute.raked_product(block_layout, tiler_layout)      # shape: (8, 15)
+blocked = cute.blocked_product(block_layout, tiler_layout)  # shape: ((2, 4), (3, 5))
+raked = cute.raked_product(block_layout, tiler_layout)      # shape: ((4, 2), (5, 3))
 ```
 
 ### Helper
@@ -180,7 +180,7 @@ raked = cute.raked_product(block_layout, tiler_layout)      # shape: (8, 15)
 - Use `cute.tile_to_shape(atom, trg_shape, order)` to repeat or fit a layout atom to a target shape.
 - Use `cute.local_tile(tensor, tiler, coord, proj=...)` to extract one tiled tensor view; it is equivalent to a zipped divide followed by rest-coordinate selection.
 - Use `cute.local_partition(tensor, tiler, index, proj=...)` when building an indexed partition from a tensor and tiler.
-- For `atom` shape `(AtomM, AtomN)` and target shape `(M, N)`, `cute.tile_to_shape(atom, (M, N), order)` returns a layout with shape `(M, N)`; the atom layout and `order` determine the repeated memory order.
+- For `atom` shape `(AtomM, AtomN)` and target shape `(M, N)`, `cute.tile_to_shape(atom, (M, N), order)` returns a layout with logical extents `(M, N)` but may preserve atom/rest hierarchy in `cute.shape(result)`.
 - For `tensor` shape `(8, 24)` and tiler shape `(4, 8)`, `cute.zipped_divide(tensor, tiler)` has mode structure `((4, 8), (2, 3))`.
 - `cute.local_tile(tensor, tiler, rest_coord)` slices the rest mode and keeps the tile mode, so the result shape is `(4, 8)`.
 - `cute.local_partition(tensor, tiler_layout, index)` slices the tile mode and keeps the rest mode, so the result shape is `(2, 3)` for one selected tile coordinate.
@@ -190,7 +190,7 @@ raked = cute.raked_product(block_layout, tiler_layout)      # shape: (8, 15)
 atom_shape = (2, 2)
 atom_stride = (2, 1)
 atom = cute.make_layout(atom_shape, stride=atom_stride)
-tiled_layout = cute.tile_to_shape(atom, (4, 6), (0, 1))  # shape: (4, 6)
+tiled_layout = cute.tile_to_shape(atom, (4, 6), (0, 1))  # shape: ((2, 2), (2, 3))
 
 tile_shape = (4, 8)
 tiled = cute.zipped_divide(tensor, tile_shape)  # ((4, 8), (2, 3))
