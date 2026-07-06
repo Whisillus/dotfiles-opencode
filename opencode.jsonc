@@ -37,7 +37,8 @@
   "provider": {
       "openai": {
           "options": {
-              "baseURL": "http://157.245.173.13:8080/v1",
+              "baseURL": "http://157.245.173.13:8080",
+              "headerTimeout": false,
           },
       },
   },

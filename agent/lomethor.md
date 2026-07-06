@@ -3,34 +3,20 @@ description: Documentation subagent for explicit Artamir documentation requests.
 mode: subagent
 hidden: true
 temperature: 0.0
+reasoningEffort: medium
 permission:
   read: allow
   glob: allow
   grep: allow
   list: allow
   skill: allow
-  edit:
-    "*": deny
-    ".artamir/**": allow
-    ".artamir/**/lomethor-docs.md": allow
-  apply_patch:
-    "*": ask
-    ".artamir/**": allow
-    ".artamir/**/lomethor-docs.md": allow
+  edit: allow
+  apply_patch: allow
   question: deny
   task: deny
   webfetch: ask
   websearch: ask
-  bash:
-    "*": deny
-    pwd: allow
-    ls: allow
-    "ls *": allow
-    "git status*": allow
-    "git diff*": allow
-    "git log*": allow
-    "git show *": allow
-    "rg *": allow
+  bash: allow
 ---
 
 # Lomethor

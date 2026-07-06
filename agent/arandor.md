@@ -3,6 +3,7 @@ description: Architecture planning subagent for Artamir coding missions.
 mode: subagent
 hidden: true
 temperature: 0.0
+reasoningEffort: xhigh
 permission:
   read: allow
   glob: allow
@@ -13,24 +14,9 @@ permission:
   task: deny
   webfetch: deny
   websearch: deny
-  edit:
-    "*": deny
-    ".artamir/**": allow
-    ".artamir/**/arandor-arch.md": allow
-  apply_patch:
-    "*": ask
-    ".artamir/**": allow
-    ".artamir/**/arandor-arch.md": allow
-  bash:
-    "*": deny
-    pwd: allow
-    ls: allow
-    "ls *": allow
-    "git status*": allow
-    "git diff*": allow
-    "git log*": allow
-    "git show *": allow
-    "rg *": allow
+  edit: allow
+  apply_patch: allow
+  bash: allow
 ---
 
 # Arandor
