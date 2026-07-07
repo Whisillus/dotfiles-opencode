@@ -1,6 +1,6 @@
 ---
 name: cute-mma
-description: Use when the user asks about C++ CuTe MMA, GEMM, cute::gemm, TiledMMA, ThrMMA, MMA_Atom, MMA_Traits, MMA operation structs, WMMA, WGMMA, warpgroup MMA, MMA fragments, or MMA instruction shapes.
+description: Use when the user asks about C++ CuTe MMA, GEMM, cute::gemm, TiledMMA, ThrMMA, MMA_Atom, MMA_Traits, MMA operation structs, WMMA, WGMMA, SM120 block-scaled MMA, warpgroup MMA, MMA fragments, or MMA instruction shapes.
 ---
 
 # CuTe C++ MMA
@@ -31,7 +31,7 @@ auto mma_op = MmaOp{};
 
 ### Warp-Level MMA Operations
 
-- Use SM70, SM75, and SM80 operation structs for synchronous warp-level or quadpair-level MMA instructions.
+- Use SM70, SM75, SM80, SM89, and SM120 operation structs for synchronous warp-level or quadpair-level MMA instructions.
 - The operation struct name encodes architecture, instruction shape, D/A/B/C types, and operand layout or transpose convention.
 - Examples include `SM70_8x8x4_F32F16F16F32_NT`, `SM75_16x8x8_F32F16F16F32_TN`, and `SM80_16x8x16_F16F16F16F16_TN`.
 - Use architecture-specific operations only when the target architecture, operand element types, operand layouts, and instruction shape match.
@@ -45,6 +45,33 @@ Operation inputs:
 ```c++
 using MmaOp = SM80_16x8x16_F16F16F16F16_TN;
 auto mma_op = MmaOp{};
+```
+
+- Non-block-scaled narrow precision uses `SM120_16x8x32_TN<a_type, b_type, c_type>` for `mma.sync.aligned.kind::f8f6f4` forms.
+- Block-scaled MXF8/F6/F4 uses `SM120::BLOCKSCALED::SM120_16x8x32_TN_VS<a_type, b_type, c_type, sf_type, VS>` for `mma.sync.aligned.kind::mxf8f6f4.block_scale.scale_vec::1X` forms.
+- FP4 block-scaled variants use `SM120::BLOCKSCALED::SM120_16x8x64_TN_VS<a_type, b_type, c_type, sf_type, VS>`; choose the scale-factor type and `VS` from the local example or helper for the target `mxf4.block_scale` or `mxf4nvf4.block_scale.scale_vec::{2X|4X}` form.
+- SM120 narrow and block-scaled CuTe MMA paths are TN-only: A is row-major/K-major and B is column-major/K-major.
+- Block-scaled atoms carry scale-factor fragments as part of the operand path. Preserve local zipped data/SF tensor construction and do not pass ordinary A/B fragments without the expected scale-factor layout.
+
+```c++
+using MmaOp = SM120_16x8x32_TN<float_e4m3_t, float_e5m2_t, float>;
+MMA_Atom<MmaOp> mma_atom;
+
+using BlockScaledMmaOp = SM120::BLOCKSCALED::SM120_16x8x32_TN_VS<
+    float_e4m3_t,
+    float_e2m1_t,
+    float,
+    float_ue8m0_t,
+    32>;
+MMA_Atom<BlockScaledMmaOp> block_scaled_mma_atom;
+
+using Fp4BlockScaledMmaOp = SM120::BLOCKSCALED::SM120_16x8x64_TN_VS<
+    float_e2m1_t,
+    float_e2m1_t,
+    float,
+    float_ue4m3_t,
+    16>;
+MMA_Atom<Fp4BlockScaledMmaOp> fp4_block_scaled_mma_atom;
 ```
 
 ### WGMMA Operations
@@ -100,6 +127,7 @@ Common trait members:
 - `Shape_MNK`: logical instruction shape.
 - `ThrID`: logical thread-id layout for the operation.
 - `ALayout`, `BLayout`, `CLayout`: `(thread,value) -> operand-coordinate` layouts.
+- `ValTypeSF`, `SFVecSize`, `SFALayout`, and `SFBLayout`: scale-factor type, vector size, and scale-factor layouts for SM120 block-scaled operations when exposed by the traits.
 
 ```c++
 using Traits = MMA_Traits<SM80_16x8x16_F16F16F16F16_TN>;

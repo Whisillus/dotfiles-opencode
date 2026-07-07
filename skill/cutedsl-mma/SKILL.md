@@ -1,6 +1,6 @@
 ---
 name: cutedsl-mma
-description: Use when the user asks about CuTe DSL MMA, GEMM, cute.gemm, tiled MMA, WMMA, WGMMA, warpgroup MMA, MMA atoms, or MMA instruction shapes.
+description: Use when the user asks about CuTe DSL MMA, GEMM, cute.gemm, tiled MMA, WMMA, WGMMA, SM120 block-scaled MMA, warpgroup MMA, MMA atoms, or MMA instruction shapes.
 ---
 
 # CuTe DSL MMA
@@ -30,7 +30,7 @@ abacc_dtype = a_dtype
 mma_op = cute.nvgpu.MmaUniversalOp(abacc_dtype)
 ```
 
-### WMMA Op
+### Warp MMA Op
 
 Use `cute.nvgpu.warp` MMA ops for synchronous warp-level MMA instructions.
 
@@ -39,9 +39,12 @@ Use `cute.nvgpu.warp` MMA ops for synchronous warp-level MMA instructions.
 - Supported architectures:
   - `MmaF16BF16Op`: SM80+.
   - `MmaFP8Op`: SM89+.
+  - `MmaMXF4Op`, `MmaMXF4NVF4Op`, `MmaMXF8Op`, and `MmaMXF8F6F4Op`: SM120a/SM120f/SM121a/SM121f.
 - Supported instruction shapes:
   - `MmaF16BF16Op`: `(16, 8, 8)` or `(16, 8, 16)`.
   - `MmaFP8Op`: `(16, 8, 16)` or `(16, 8, 32)`.
+  - SM120 FP8 block-scaled ops: `(16, 8, 32)`.
+  - SM120 FP4 block-scaled ops: `(16, 8, 64)`.
 
 Op inputs:
 
@@ -54,6 +57,34 @@ ab_type = a_dtype
 
 mma_inst_shape_mnk = (16, 8, 16)
 mma_op = cute.nvgpu.warp.MmaF16BF16Op(ab_type, acc_dtype, mma_inst_shape_mnk)
+```
+
+
+Use `cute.nvgpu.warp` SM120 ops for Blackwell GeForce/RTX 50-series block-scaled `mma.sync.aligned.kind::...` instructions.
+
+- These ops are warp-collective and synchronous;
+- The accumulator type must be `cutlass.Float32`.
+- Operand layout is fixed: A K-major and B K-major.
+- `MmaMXF4Op(ab_dtype, acc_dtype, sf_type)` uses `cutlass.Float4E2M1FN` inputs and `cutlass.Float8E8M0FNU` scale factors; the class fixes vector size 32 and shape `(16, 8, 64)`.
+- `MmaMXF4NVF4Op(ab_dtype, acc_dtype, sf_type)` uses `cutlass.Float4E2M1FN` inputs and `cutlass.Float8E4M3FN` scale factors; the class fixes vector size 16 and shape `(16, 8, 64)`.
+- `MmaMXF8Op(ab_dtype, acc_dtype, sf_type)` uses same-type FP8 inputs (`cutlass.Float8E4M3FN` or `cutlass.Float8E5M2`) and `cutlass.Float8E8M0FNU` scale factors; the class fixes vector size 32 and shape `(16, 8, 32)`.
+- `MmaMXF8F6F4Op(a_dtype, b_dtype, acc_dtype, sf_type)` uses independent A/B dtypes. In the local CuTe DSL API, supported mixed pairs are FP4 x FP8 and FP8 x FP4 with `cutlass.Float8E8M0FNU` scale factors; same-type FP4 routes to `MmaMXF4Op` or `MmaMXF4NVF4Op`, and same-type FP8 routes to `MmaMXF8Op`.
+- The local CuTe DSL `cute.nvgpu.warp` module exposes SM120 block-scaled warp ops.
+- Prefer local helpers such as `make_sm120_blockscaled_mma_op(...)` when present.
+
+```python
+mma_op = cute.nvgpu.warp.MmaMXF4Op(
+    cutlass.Float4E2M1FN,
+    cutlass.Float32,
+    cutlass.Float8E8M0FNU,
+)
+
+mixed_mma_op = cute.nvgpu.warp.MmaMXF8F6F4Op(
+    cutlass.Float4E2M1FN,
+    cutlass.Float8E5M2,
+    cutlass.Float32,
+    cutlass.Float8E8M0FNU,
+)
 ```
 
 ### WGMMA Op
@@ -132,7 +163,7 @@ cute.nvgpu.warpgroup.wait_group(0)  # waits until no committed WGMMA groups rema
 
 - Treat the MMA operation descriptor as an op, not an atom.
 - Create the MMA atom with `mma_atom = cute.make_mma_atom(mma_op)` after choosing the MMA op.
-- `cute.make_mma_atom(...)` has one normal user input: `mma_op`. Optional `loc`, `ip`, and internal `**kwargs` exist in the API, but current Universal MMA, WMMA, and WGMMA ops do not need op-specific kwargs.
+- `cute.make_mma_atom(...)` has one normal user input: `mma_op`. Optional `loc`, `ip`, and internal `**kwargs` exist in the API, but current Universal MMA, warp MMA, SM120 block-scaled warp MMA, and WGMMA ops do not need op-specific kwargs.
 
 ```python
 mma_atom = cute.make_mma_atom(mma_op)
