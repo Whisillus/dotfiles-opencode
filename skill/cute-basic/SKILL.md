@@ -1,6 +1,6 @@
 ---
 name: cute-basic
-description: Use whenever writing, reviewing, or debugging C++ CuTe code; covers headers, namespaces, static integers, GEMM terminology, predication, elem_less/elem_leq/elem_gtr/elem_geq comparisons, shared storage, debug workflow, and routing to related C++ CuTe skills.
+description: Use whenever writing, reviewing, or debugging C++ CuTe code; covers headers, namespaces, static integers, GEMM terminology, tensor and partitioned tensor naming conventions, predication, elem_less/elem_leq/elem_gtr/elem_geq comparisons, shared storage, debug workflow, and routing to related C++ CuTe skills.
 ---
 
 # CuTe C++ Basic
@@ -60,6 +60,36 @@ CUTE_STATIC_ASSERT_V(congruent(select<0,2>(problem_shape), stride_A));
 Tensor mA = make_tensor(make_gmem_ptr(A), select<0,2>(shape_MNK), dA);  // (M,K)
 Tensor mB = make_tensor(make_gmem_ptr(B), select<1,2>(shape_MNK), dB);  // (N,K)
 Tensor mC = make_tensor(make_gmem_ptr(C), select<0,1>(shape_MNK), dC);  // (M,N)
+```
+
+## Tensor Naming
+
+- Read common CuTe/CUTLASS base tensor names as `yZ`: tensor kind or storage `y` holding logical tensor or operand `Z`.
+- Common first letters are `m` for the original logical matrix/tensor, `g` for global memory, `s` for shared memory, `r` for register fragment, `c` for coordinate/identity tensor, and `p` for predicate tensor.
+
+```c++
+Tensor mA = make_tensor(make_gmem_ptr(A), select<0,2>(shape_MNK), dA); // logical matrix A
+Tensor gA = local_tile(mA, cta_tiler, cta_coord, Step<_1, X,_1>{});    // CTA tile of global A
+Tensor sA = make_tensor(make_smem_ptr(storage.A.begin()), SmemLayoutA{}); // shared-memory A
+Tensor cA = make_identity_tensor(shape(mA));                           // coordinate tensor for A
+```
+
+## Partitioned Tensor Naming
+
+- Read common CuTe/CUTLASS partitioned tensor names as `tXyZ`: each thread's slice or view of tensor `yZ` for the `X` path.
+- The first `t` means a per-thread view produced by a partitioning path such as `local_partition`, `ThrCopy::partition_*`, or `ThrMMA::partition_*`.
+- The second letter `X` names the path or role, not necessarily the final operand: `A` and `B` are usually load/copy paths, `C` is usually the compute/MMA or accumulator path, `D` is usually an output/epilogue path, and `Q`, `K`, `V`, or `O` are common attention paths.
+- The third letter `y` names the tensor kind or storage: `g` global memory, `s` shared memory, `r` register fragment, `c` coordinate/identity tensor, `p` predicate tensor, and sometimes `m` for the original logical matrix or tensor.
+- The final letter or suffix `Z` names the logical tensor or operand being viewed, such as `A`, `B`, `C`, `D`, `Q`, `K`, `V`, `O`, `Aux`, `Acc`, `SFA`, or `SFB`.
+- Prefer this user-facing explanation over the formal phrase "partitioning pattern `tX` applied to tensor `yZ`" unless discussing CuTe layout mechanics directly.
+
+```c++
+Tensor tAgA = thr_copy_a.partition_S(gA); // each thread's slice of global A for the A load/copy path
+Tensor tAsA = thr_copy_a.partition_D(sA); // each thread's slice of shared A for the A load/copy path
+
+Tensor tCsA = thr_mma.partition_A(sA);    // each thread's slice of shared A for the C compute/MMA path
+Tensor tCsB = thr_mma.partition_B(sB);    // each thread's slice of shared B for the C compute/MMA path
+Tensor tCrC = thr_mma.make_fragment_C(tCgC); // each thread's register C fragment for the C compute/MMA path
 ```
 
 ## Predication And Comparisons

@@ -1,6 +1,6 @@
 ---
 name: cutedsl-basic
-description: Use whenever writing, reviewing, or debugging CuTe DSL code; covers default imports, JIT/runtime, control flow, dtypes, terminology, tensor access, predication, cute.elem_less, shared storage, arch wrappers, debug workflow, and routing to related CuTe DSL skills.
+description: Use whenever writing, reviewing, or debugging CuTe DSL code; covers default imports, JIT/runtime, control flow, dtypes, terminology, tensor and partitioned tensor naming conventions, tensor access, predication, cute.elem_less, shared storage, arch wrappers, debug workflow, and routing to related CuTe DSL skills.
 ---
 
 # CuTe DSL Basic
@@ -106,6 +106,36 @@ acc_dtype = ...
 - Do not use row-major or column-major terminology when discussing CuTe DSL major modes.
 - Prefer `cute.nvgpu.OperandMajorMode.MN` and `cute.nvgpu.OperandMajorMode.K` for operands.
 - Prefer `cute.nvgpu.OutputMajorMode.M` and `cute.nvgpu.OutputMajorMode.N` for outputs when an output-major enum is needed.
+
+## Tensor Naming
+
+- Read common CuTe/CUTLASS base tensor names as `yZ`: tensor kind or storage `y` holding logical tensor or operand `Z`.
+- Common first letters are `m` for the original logical matrix/tensor, `g` for global memory, `s` for shared memory, `r` for register fragment, `c` for coordinate/identity tensor, and `p` for predicate tensor.
+
+```python
+mA = cute.make_tensor(a_ptr, a_layout)  # logical matrix A
+gA = cute.local_tile(mA, cta_tiler, cta_coord)  # CTA tile of global A
+sA = storage.smem.get_tensor(smem_layout)  # shared-memory A
+cA = cute.make_identity_tensor(mA.shape)  # coordinate tensor for A
+```
+
+## Partitioned Tensor Naming
+
+- Read common CuTe/CUTLASS partitioned tensor names as `tXyZ`: each thread's slice or view of tensor `yZ` for the `X` path.
+- The first `t` means a per-thread view produced by a partitioning path such as `cute.local_partition`, `thr_copy.partition_*`, or `thr_mma.partition_*`.
+- The second letter `X` names the path or role, not necessarily the final operand: `A` and `B` are usually load/copy paths, `C` is usually the compute/MMA or accumulator path, `D` is usually an output/epilogue path, and `Q`, `K`, `V`, or `O` are common attention paths.
+- The third letter `y` names the tensor kind or storage: `g` global memory, `s` shared memory, `r` register fragment, `c` coordinate/identity tensor, `p` predicate tensor, and sometimes `m` for the original logical matrix or tensor.
+- The final letter or suffix `Z` names the logical tensor or operand being viewed, such as `A`, `B`, `C`, `D`, `Q`, `K`, `V`, `O`, `Aux`, `Acc`, `SFA`, or `SFB`.
+- Prefer this user-facing explanation over the formal phrase "partitioning pattern `tX` applied to tensor `yZ`" unless discussing CuTe layout mechanics directly.
+
+```python
+tAgA = thr_copy_a.partition_S(gA)  # each thread's slice of global A for the A load/copy path
+tAsA = thr_copy_a.partition_D(sA)  # each thread's slice of shared A for the A load/copy path
+
+tCsA = thr_mma.partition_A(sA)     # each thread's slice of shared A for the C compute/MMA path
+tCsB = thr_mma.partition_B(sB)     # each thread's slice of shared B for the C compute/MMA path
+tCrC = tiled_mma.make_fragment_C(tCgC)  # each thread's register C fragment for the C compute/MMA path
+```
 
 ## Tensor Access
 
